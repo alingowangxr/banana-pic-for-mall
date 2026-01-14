@@ -100,19 +100,11 @@ npm install
 - 在应用设置页面输入 API Key
 - API Key 会安全地存储在本地
 
-4. **启动开发服务器**
+4. **启动服务**
 
 ```bash
-npm run tauri:dev
+npm run dev
 ```
-
-### 构建生产版本
-
-```bash
-npm run tauri:build
-```
-
-构建产物位于 `src-tauri/target/release/` 目录。
 
 ## 📁 项目结构
 
