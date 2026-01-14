@@ -181,7 +181,7 @@ banana-mall/
 
 ## 🐛 问题反馈
 
-如遇到问题，请在 [GitHub Issues](https://github.com/yourusername/banana-mall/issues) 提交。
+如遇到问题，请在 [GitHub Issues](https://github.com/ziguishian/banana-mall/issues) 提交。
 
 ## 📄 许可证
 
