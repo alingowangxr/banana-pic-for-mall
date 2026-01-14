@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
+import { useAppStore } from '@/stores/useAppStore';
 
 export type Theme = 'light' | 'dark' | 'system';
 
 export function useTheme() {
+  // Try to get theme from store first, then fallback to localStorage
+  const storeTheme = useAppStore((state) => state.settings.theme);
   const [theme, setTheme] = useState<Theme>(() => {
-    // Load from localStorage or default to system
+    // Priority: store > localStorage > system
+    if (storeTheme) return storeTheme;
     const saved = localStorage.getItem('theme') as Theme;
     return saved || 'system';
   });
@@ -15,6 +19,13 @@ export function useTheme() {
     }
     return theme;
   });
+
+  // Sync with store theme
+  useEffect(() => {
+    if (storeTheme && storeTheme !== theme) {
+      setTheme(storeTheme);
+    }
+  }, [storeTheme]);
 
   useEffect(() => {
     // Update resolved theme when theme changes

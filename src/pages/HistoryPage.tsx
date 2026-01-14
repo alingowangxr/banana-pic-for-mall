@@ -1,13 +1,19 @@
 import { useAppStore } from "@/stores/useAppStore";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Clock, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 
 export function HistoryPage() {
-  const { histories, setGeneratedContent, setCurrentStep, updateSettings } = useAppStore();
+  const { histories, setGeneratedContent, setCurrentStep } = useAppStore();
 
-  const handleLoadHistory = (history: typeof histories[0]) => {
+  const handleLoadHistory = (history: (typeof histories)[0]) => {
     setGeneratedContent(history);
     setCurrentStep("editing");
   };
@@ -23,8 +29,8 @@ export function HistoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="border-b bg-card">
+    <div className="h-full bg-background flex flex-col overflow-hidden">
+      <div className="flex-shrink-0 border-b bg-card">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button
@@ -40,7 +46,7 @@ export function HistoryPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-6">
+      <div className="flex-1 overflow-auto container mx-auto px-6 py-6">
         {histories.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
@@ -57,7 +63,10 @@ export function HistoryPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {histories.map((history) => (
-              <Card key={history.id} className="hover:shadow-lg transition-shadow">
+              <Card
+                key={history.id}
+                className="hover:shadow-lg transition-shadow"
+              >
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -66,7 +75,10 @@ export function HistoryPage() {
                       </CardTitle>
                       <CardDescription className="mt-2 flex items-center gap-2">
                         <Clock className="h-3 w-3" />
-                        {format(new Date(history.createdAt), "yyyy-MM-dd HH:mm")}
+                        {format(
+                          new Date(history.createdAt),
+                          "yyyy-MM-dd HH:mm"
+                        )}
                       </CardDescription>
                     </div>
                     <Button
@@ -89,8 +101,22 @@ export function HistoryPage() {
                       />
                     )}
                     <div className="text-sm text-muted-foreground">
-                      <p>平台: {history.platform === "amazon" ? "Amazon" : history.platform === "taobao" ? "淘宝" : "京东"}</p>
-                      <p>风格: {history.style === "minimal" ? "极简" : history.style === "cyber" ? "赛博" : "国潮"}</p>
+                      <p>
+                        平台:{" "}
+                        {history.platform === "amazon"
+                          ? "Amazon"
+                          : history.platform === "taobao"
+                          ? "淘宝"
+                          : "京东"}
+                      </p>
+                      <p>
+                        风格:{" "}
+                        {history.style === "minimal"
+                          ? "极简"
+                          : history.style === "cyber"
+                          ? "赛博"
+                          : "国潮"}
+                      </p>
                       <p>图片: {history.images.length} 张</p>
                     </div>
                     <Button

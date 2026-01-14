@@ -24,7 +24,7 @@ async function exportTauri(
   content: GeneratedContent,
   exportPath?: string
 ): Promise<void> {
-  const { writeTextFile, writeBinaryFile, createDir } = await import(
+  const { writeTextFile, writeFile, mkdir } = await import(
     "@tauri-apps/plugin-fs"
   );
   const { open } = await import("@tauri-apps/plugin-dialog");
@@ -46,7 +46,7 @@ async function exportTauri(
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const folderName = `banana-mall-export-${timestamp}`;
   const exportDir = `${targetDir}/${folderName}`;
-  await createDir(exportDir, { recursive: true });
+  await mkdir(exportDir, { recursive: true });
 
   // Export JSON content
   const jsonContent = {
@@ -73,7 +73,7 @@ async function exportTauri(
     const imageData = await fetch(image.url).then((r) => r.arrayBuffer());
     const extension = image.type === "main" ? "main" : "detail";
     const imagePath = `${exportDir}/${i + 1}_${extension}_${image.id}.png`;
-    await writeBinaryFile(imagePath, new Uint8Array(imageData));
+    await writeFile(imagePath, new Uint8Array(imageData));
   }
 
   alert(`导出成功！文件保存在：${exportDir}`);
@@ -158,9 +158,11 @@ function generateMarkdown(content: GeneratedContent): string {
   if (detailPage.socialProof) {
     md += `## 用户评价\n\n`;
     if (detailPage.socialProof.reviews) {
-      detailPage.socialProof.reviews.forEach((review: { text: string; rating: number }) => {
-        md += `**${"⭐".repeat(review.rating)}** ${review.text}\n\n`;
-      });
+      detailPage.socialProof.reviews.forEach(
+        (review: { text: string; rating: number }) => {
+          md += `**${"⭐".repeat(review.rating)}** ${review.text}\n\n`;
+        }
+      );
     }
   }
 

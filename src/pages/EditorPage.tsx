@@ -2,22 +2,28 @@ import { useState, useRef, useEffect } from "react";
 import { useAppStore } from "@/stores/useAppStore";
 import { api } from "@/lib/api";
 import { exportContent } from "@/lib/export";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Download, 
-  RefreshCw, 
-  Edit2, 
+import {
+  Download,
+  RefreshCw,
+  Edit2,
   Image as ImageIcon,
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
   Smartphone,
-  Monitor
+  Monitor,
 } from "lucide-react";
 import { Loader2 } from "lucide-react";
 
@@ -25,7 +31,8 @@ const isTauri = () =>
   typeof window !== "undefined" && "__TAURI_IPC__" in window;
 
 export function EditorPage() {
-  const { generatedContent, setGeneratedContent, setCurrentStep, settings } = useAppStore();
+  const { generatedContent, setGeneratedContent, setCurrentStep, settings } =
+    useAppStore();
   const [editingImageId, setEditingImageId] = useState<string | null>(null);
   const [imagePrompt, setImagePrompt] = useState("");
   const [isRegenerating, setIsRegenerating] = useState(false);
@@ -34,10 +41,16 @@ export function EditorPage() {
   const [isMobileView, setIsMobileView] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [imageLoadErrors, setImageLoadErrors] = useState<Set<string>>(
+    new Set()
+  );
+  const [imageLoadStates, setImageLoadStates] = useState<Map<string, boolean>>(
+    new Map()
+  );
 
   if (!generatedContent) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="h-full bg-background flex items-center justify-center">
         <Card>
           <CardContent className="p-6">
             <p className="text-muted-foreground">未找到生成内容</p>
@@ -54,9 +67,22 @@ export function EditorPage() {
     );
   }
 
-  const { product, images, texts, platform, style, detailPage } = generatedContent;
+  const { images, texts, detailPage } = generatedContent;
   const mainImages = images.filter((img) => img.type === "main");
   const detailImages = images.filter((img) => img.type === "detail");
+
+  // 调试：输出图片信息
+  useEffect(() => {
+    console.log("主图数量:", mainImages.length);
+    mainImages.forEach((img, idx) => {
+      console.log(`主图 ${idx + 1}:`, {
+        id: img.id,
+        url: img.url,
+        urlLength: img.url?.length,
+        hasUrl: !!img.url,
+      });
+    });
+  }, [mainImages]);
 
   // Auto-scroll carousel
   useEffect(() => {
@@ -139,7 +165,7 @@ export function EditorPage() {
 
     // 桌面端：写入指定目录（settings.exportPath），如果没有则弹出目录选择
     if (isTauri()) {
-      const { writeBinaryFile, createDir } = await import(
+      const { writeFile, mkdir } = await import(
         /* @vite-ignore */ "@tauri-apps/plugin-fs"
       );
       const { open } = await import(
@@ -158,14 +184,13 @@ export function EditorPage() {
         targetDir = selected;
       }
 
-      await createDir(targetDir, { recursive: true });
+      await mkdir(targetDir, { recursive: true });
 
-      const binary = Uint8Array.from(
-        atob(base64),
-        (char) => char.charCodeAt(0)
+      const binary = Uint8Array.from(atob(base64), (char) =>
+        char.charCodeAt(0)
       );
       const targetPath = `${targetDir}/${filename}`;
-      await writeBinaryFile(targetPath, binary);
+      await writeFile(targetPath, binary);
       alert(`已保存到：${targetPath}`);
       return;
     }
@@ -203,7 +228,8 @@ export function EditorPage() {
       });
 
       // 自动保存重绘后的图片
-      const { base64: newBase64, mimeType: newMime } = await getImageDataForEdit(newImageUrl);
+      const { base64: newBase64, mimeType: newMime } =
+        await getImageDataForEdit(newImageUrl);
       await saveImageLocally({
         base64: newBase64,
         mimeType: newMime,
@@ -265,13 +291,15 @@ export function EditorPage() {
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + mainImages.length) % mainImages.length);
+    setCurrentImageIndex(
+      (prev) => (prev - 1 + mainImages.length) % mainImages.length
+    );
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-full bg-background flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="border-b bg-card">
+      <div className="flex-shrink-0 border-b bg-card">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button
@@ -318,18 +346,26 @@ export function EditorPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-6">
+      <div className="flex-1 overflow-auto container mx-auto px-6 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: Preview Panel */}
-          <div className={`lg:col-span-2 space-y-0 ${isMobileView ? "flex justify-center" : ""}`}>
+          <div
+            className={`lg:col-span-2 space-y-0 ${
+              isMobileView ? "flex justify-center" : ""
+            }`}
+          >
             {isMobileView ? (
               // Mobile Preview
               <div className="w-[375px] bg-gray-100 rounded-lg shadow-2xl overflow-hidden">
-                <div className="bg-white min-h-screen">
+                <div className="bg-white min-h-full">
                   {/* Product Title */}
                   <div className="p-4 border-b">
-                    <h1 className="text-lg font-semibold leading-tight">{texts.title}</h1>
-                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">{texts.description}</p>
+                    <h1 className="text-lg font-semibold leading-tight">
+                      {texts.title}
+                    </h1>
+                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                      {texts.description}
+                    </p>
                   </div>
 
                   {/* Image Carousel */}
@@ -339,19 +375,96 @@ export function EditorPage() {
                       className="flex overflow-x-hidden scroll-smooth"
                       style={{ scrollSnapType: "x mandatory" }}
                     >
-                      {mainImages.map((image, idx) => (
-                        <div
-                          key={image.id}
-                          className="w-full flex-shrink-0"
-                          style={{ scrollSnapAlign: "start" }}
-                        >
-                          <img
-                            src={image.url}
-                            alt={`主图 ${idx + 1}`}
-                            className="w-full aspect-square object-cover"
-                          />
-                        </div>
-                      ))}
+                      {mainImages.map((image, idx) => {
+                        const hasError = imageLoadErrors.has(image.id);
+                        const isLoading =
+                          imageLoadStates.get(image.id) !== false;
+
+                        return (
+                          <div
+                            key={image.id}
+                            className="w-full flex-shrink-0 relative"
+                            style={{ scrollSnapAlign: "start" }}
+                          >
+                            {hasError ? (
+                              <div className="w-full aspect-square bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300">
+                                <div className="text-center p-4">
+                                  <ImageIcon className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+                                  <p className="text-sm text-gray-500 mb-1">
+                                    图片加载失败
+                                  </p>
+                                  <p className="text-xs text-gray-400 mb-2">
+                                    主图 {idx + 1}
+                                  </p>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => {
+                                      setImageLoadErrors((prev) => {
+                                        const next = new Set(prev);
+                                        next.delete(image.id);
+                                        return next;
+                                      });
+                                      setImageLoadStates((prev) => {
+                                        const next = new Map(prev);
+                                        next.set(image.id, true);
+                                        return next;
+                                      });
+                                    }}
+                                  >
+                                    重试
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                {isLoading && (
+                                  <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+                                    <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+                                  </div>
+                                )}
+                                <img
+                                  src={image.url}
+                                  alt={`主图 ${idx + 1}`}
+                                  className="w-full aspect-square object-cover"
+                                  onLoad={() => {
+                                    setImageLoadStates((prev) => {
+                                      const next = new Map(prev);
+                                      next.set(image.id, false);
+                                      return next;
+                                    });
+                                    setImageLoadErrors((prev) => {
+                                      const next = new Set(prev);
+                                      next.delete(image.id);
+                                      return next;
+                                    });
+                                  }}
+                                  onError={(e) => {
+                                    console.error(
+                                      `图片加载失败 (主图 ${idx + 1}):`,
+                                      {
+                                        id: image.id,
+                                        url: image.url,
+                                        error: e,
+                                      }
+                                    );
+                                    setImageLoadErrors((prev) => {
+                                      const next = new Set(prev);
+                                      next.add(image.id);
+                                      return next;
+                                    });
+                                    setImageLoadStates((prev) => {
+                                      const next = new Map(prev);
+                                      next.set(image.id, false);
+                                      return next;
+                                    });
+                                  }}
+                                />
+                              </>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                     {mainImages.length > 1 && (
                       <>
@@ -372,7 +485,9 @@ export function EditorPage() {
                             <div
                               key={idx}
                               className={`h-1.5 rounded-full transition-all ${
-                                idx === currentImageIndex ? "w-6 bg-white" : "w-1.5 bg-white/50"
+                                idx === currentImageIndex
+                                  ? "w-6 bg-white"
+                                  : "w-1.5 bg-white/50"
                               }`}
                             />
                           ))}
@@ -406,7 +521,10 @@ export function EditorPage() {
                       <h2 className="text-base font-semibold mb-3">商品规格</h2>
                       <div className="space-y-2">
                         {texts.specifications.map((spec, idx) => (
-                          <div key={idx} className="flex items-start gap-2 text-sm">
+                          <div
+                            key={idx}
+                            className="flex items-start gap-2 text-sm"
+                          >
                             <span className="text-gray-500">•</span>
                             <span className="text-gray-700">{spec}</span>
                           </div>
@@ -421,27 +539,43 @@ export function EditorPage() {
                       <h2 className="text-base font-semibold mb-3">产品卖点</h2>
                       {detailPage.valueProposition.painPoints && (
                         <div className="mb-4">
-                          <h3 className="text-sm font-medium text-gray-600 mb-2">用户痛点</h3>
+                          <h3 className="text-sm font-medium text-gray-600 mb-2">
+                            用户痛点
+                          </h3>
                           <div className="space-y-2">
-                            {detailPage.valueProposition.painPoints.map((point: string, idx: number) => (
-                              <div key={idx} className="flex items-start gap-2 text-sm">
-                                <span className="text-red-500">⚠</span>
-                                <span className="text-gray-700">{point}</span>
-                              </div>
-                            ))}
+                            {detailPage.valueProposition.painPoints.map(
+                              (point: string, idx: number) => (
+                                <div
+                                  key={idx}
+                                  className="flex items-start gap-2 text-sm"
+                                >
+                                  <span className="text-red-500">⚠</span>
+                                  <span className="text-gray-700">{point}</span>
+                                </div>
+                              )
+                            )}
                           </div>
                         </div>
                       )}
                       {detailPage.valueProposition.solutions && (
                         <div>
-                          <h3 className="text-sm font-medium text-gray-600 mb-2">解决方案</h3>
+                          <h3 className="text-sm font-medium text-gray-600 mb-2">
+                            解决方案
+                          </h3>
                           <div className="space-y-2">
-                            {detailPage.valueProposition.solutions.map((solution: string, idx: number) => (
-                              <div key={idx} className="flex items-start gap-2 text-sm">
-                                <span className="text-green-500">✓</span>
-                                <span className="text-gray-700">{solution}</span>
-                              </div>
-                            ))}
+                            {detailPage.valueProposition.solutions.map(
+                              (solution: string, idx: number) => (
+                                <div
+                                  key={idx}
+                                  className="flex items-start gap-2 text-sm"
+                                >
+                                  <span className="text-green-500">✓</span>
+                                  <span className="text-gray-700">
+                                    {solution}
+                                  </span>
+                                </div>
+                              )
+                            )}
                           </div>
                         </div>
                       )}
@@ -459,23 +593,35 @@ export function EditorPage() {
                       )}
                       {detailPage.socialProof.reviews && (
                         <div className="space-y-3">
-                          {detailPage.socialProof.reviews.map((review: { text: string; rating: number }, idx: number) => (
-                            <div key={idx} className="border-l-2 border-gray-200 pl-3">
-                              <div className="flex items-center gap-1 mb-1">
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                  <span
-                                    key={i}
-                                    className={`text-sm ${
-                                      i < review.rating ? "text-yellow-400" : "text-gray-300"
-                                    }`}
-                                  >
-                                    ★
-                                  </span>
-                                ))}
+                          {detailPage.socialProof.reviews.map(
+                            (
+                              review: { text: string; rating: number },
+                              idx: number
+                            ) => (
+                              <div
+                                key={idx}
+                                className="border-l-2 border-gray-200 pl-3"
+                              >
+                                <div className="flex items-center gap-1 mb-1">
+                                  {Array.from({ length: 5 }).map((_, i) => (
+                                    <span
+                                      key={i}
+                                      className={`text-sm ${
+                                        i < review.rating
+                                          ? "text-yellow-400"
+                                          : "text-gray-300"
+                                      }`}
+                                    >
+                                      ★
+                                    </span>
+                                  ))}
+                                </div>
+                                <p className="text-sm text-gray-700">
+                                  {review.text}
+                                </p>
                               </div>
-                              <p className="text-sm text-gray-700">{review.text}</p>
-                            </div>
-                          ))}
+                            )
+                          )}
                         </div>
                       )}
                     </div>
@@ -499,13 +645,24 @@ export function EditorPage() {
                       )}
                       {detailPage.serviceGuarantee.faq && (
                         <div className="space-y-3">
-                          <h3 className="text-sm font-medium text-gray-600">常见问题</h3>
-                          {detailPage.serviceGuarantee.faq.map((faq: { question: string; answer: string }, idx: number) => (
-                            <div key={idx} className="text-sm">
-                              <div className="font-medium text-gray-700 mb-1">Q: {faq.question}</div>
-                              <div className="text-gray-600">A: {faq.answer}</div>
-                            </div>
-                          ))}
+                          <h3 className="text-sm font-medium text-gray-600">
+                            常见问题
+                          </h3>
+                          {detailPage.serviceGuarantee.faq.map(
+                            (
+                              faq: { question: string; answer: string },
+                              idx: number
+                            ) => (
+                              <div key={idx} className="text-sm">
+                                <div className="font-medium text-gray-700 mb-1">
+                                  Q: {faq.question}
+                                </div>
+                                <div className="text-gray-600">
+                                  A: {faq.answer}
+                                </div>
+                              </div>
+                            )
+                          )}
                         </div>
                       )}
                     </div>
@@ -531,11 +688,13 @@ export function EditorPage() {
                     <div className="p-4 bg-gray-50 border-t">
                       <h2 className="text-base font-semibold mb-3">相关推荐</h2>
                       <div className="space-y-2">
-                        {detailPage.crossSell.recommendations.map((rec: string, idx: number) => (
-                          <div key={idx} className="text-sm text-gray-700">
-                            • {rec}
-                          </div>
-                        ))}
+                        {detailPage.crossSell.recommendations.map(
+                          (rec: string, idx: number) => (
+                            <div key={idx} className="text-sm text-gray-700">
+                              • {rec}
+                            </div>
+                          )
+                        )}
                       </div>
                     </div>
                   )}
@@ -614,7 +773,9 @@ export function EditorPage() {
                                 key={idx}
                                 onClick={() => setCurrentImageIndex(idx)}
                                 className={`h-2 rounded-full transition-all ${
-                                  idx === currentImageIndex ? "w-8 bg-primary" : "w-2 bg-primary/50"
+                                  idx === currentImageIndex
+                                    ? "w-8 bg-primary"
+                                    : "w-2 bg-primary/50"
                                 }`}
                               />
                             ))}
@@ -690,7 +851,9 @@ export function EditorPage() {
                   <CardContent>
                     <Input
                       value={texts.title}
-                      onChange={(e) => handleTextChange("title", e.target.value)}
+                      onChange={(e) =>
+                        handleTextChange("title", e.target.value)
+                      }
                       placeholder="输入商品标题"
                     />
                   </CardContent>
@@ -721,9 +884,7 @@ export function EditorPage() {
                       <Input
                         key={idx}
                         value={spec}
-                        onChange={(e) =>
-                          handleSpecChange(idx, e.target.value)
-                        }
+                        onChange={(e) => handleSpecChange(idx, e.target.value)}
                         placeholder={`规格 ${idx + 1}`}
                       />
                     ))}
@@ -736,9 +897,7 @@ export function EditorPage() {
                   <Card>
                     <CardHeader>
                       <CardTitle>图片重绘</CardTitle>
-                      <CardDescription>
-                        通过提示词调整图片效果
-                      </CardDescription>
+                      <CardDescription>通过提示词调整图片效果</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="space-y-2">

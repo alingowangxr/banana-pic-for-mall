@@ -79,12 +79,8 @@ export function ConfigPage() {
   const [detailImageCount, setDetailImageCount] = useState<number>(
     settings.detailImageCount || 2
   );
-  const [brandName, setBrandName] = useState<string>(
-    settings.brandName || ""
-  );
-  const [extraInfo, setExtraInfo] = useState<string>(
-    settings.extraInfo || ""
-  );
+  const [brandName, setBrandName] = useState<string>(settings.brandName || "");
+  const [extraInfo, setExtraInfo] = useState<string>(settings.extraInfo || "");
 
   const handleNext = () => {
     if (!product) return;
@@ -107,7 +103,7 @@ export function ConfigPage() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="h-full bg-background flex items-center justify-center">
         <Card>
           <CardContent className="p-6">
             <p className="text-muted-foreground">未找到产品信息</p>
@@ -125,7 +121,7 @@ export function ConfigPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="h-full bg-background p-8 overflow-auto">
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-semibold">{t.config.title}</h1>

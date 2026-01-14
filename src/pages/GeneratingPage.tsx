@@ -118,38 +118,64 @@ export function GeneratingPage() {
             `${t.generating.generatingImages} ${i + 1}/${mainImageCount}`
           );
 
-          // 使用循环的提示词，如果超过5个则重复使用
-          const basePrompt = basePrompts[i % basePrompts.length];
-          const extraInfoSuffix =
-            extraInfo && extraInfo.length > 0
-              ? isChinese
-                ? `，整体画面风格需要呼应以下产品补充信息：${extraInfo}`
-                : `, overall visual style should reflect the following additional product info: ${extraInfo}`
-              : "";
-          const prompt =
-            brandName && platform !== "amazon" && i % 2 === 0
-              ? basePrompt +
-                (isChinese
-                  ? `，在画面合适位置加入品牌名称「${brandName}」的小标签`
-                  : `, subtly include brand name "${brandName}" as a small promotional label in the image`) +
-                extraInfoSuffix
-              : basePrompt + extraInfoSuffix;
+          try {
+            // 使用循环的提示词，如果超过5个则重复使用
+            const basePrompt = basePrompts[i % basePrompts.length];
+            const extraInfoSuffix =
+              extraInfo && extraInfo.length > 0
+                ? isChinese
+                  ? `，整体画面风格需要呼应以下产品补充信息：${extraInfo}`
+                  : `, overall visual style should reflect the following additional product info: ${extraInfo}`
+                : "";
+            const prompt =
+              brandName && platform !== "amazon" && i % 2 === 0
+                ? basePrompt +
+                  (isChinese
+                    ? `，在画面合适位置加入品牌名称「${brandName}」的小标签`
+                    : `, subtly include brand name "${brandName}" as a small promotional label in the image`) +
+                  extraInfoSuffix
+                : basePrompt + extraInfoSuffix;
 
-          // 使用editImage确保和上传图片一致，直接传递base64给Google API
-          const imageUrl = await api.editImage({
-            image: baseImageBase64,
-            imageMimeType: baseImageMimeType,
-            prompt: prompt,
-          });
+            console.log(`正在生成主图 ${i + 1}/${mainImageCount}...`, {
+              prompt: prompt.substring(0, 100) + "...",
+              hasBaseImage: !!baseImageBase64,
+              baseImageLength: baseImageBase64?.length,
+            });
 
-          mainImages.push({
-            id: `main-${i}`,
-            url: imageUrl,
-            prompt: prompt,
-            type: "main" as const,
-          });
+            // 使用editImage确保和上传图片一致，直接传递base64给Google API
+            const imageUrl = await api.editImage({
+              image: baseImageBase64,
+              imageMimeType: baseImageMimeType,
+              prompt: prompt,
+            });
 
-          setProgress(40 + Math.floor((i + 1) * (40 / mainImageCount)));
+            console.log(`主图 ${i + 1} 生成成功:`, {
+              id: `main-${i}`,
+              url: imageUrl,
+              urlLength: imageUrl?.length,
+              hasUrl: !!imageUrl,
+            });
+
+            if (!imageUrl || imageUrl.trim() === "") {
+              throw new Error(`主图 ${i + 1} 生成失败：返回的 URL 为空`);
+            }
+
+            mainImages.push({
+              id: `main-${i}`,
+              url: imageUrl,
+              prompt: prompt,
+              type: "main" as const,
+            });
+
+            setProgress(40 + Math.floor((i + 1) * (40 / mainImageCount)));
+          } catch (err) {
+            console.error(`生成主图 ${i + 1} 时出错:`, err);
+            const errorMessage =
+              err instanceof Error
+                ? err.message
+                : `生成主图 ${i + 1} 时发生未知错误`;
+            throw new Error(`${errorMessage}。请检查 API 配置和网络连接。`);
+          }
         }
 
         if (isCancelled) return;
@@ -233,7 +259,7 @@ export function GeneratingPage() {
         setProgress(100);
         setStatus(t.generating.complete);
 
-          const finalContent = {
+        const finalContent = {
           product,
           platform: platform,
           style: style,
@@ -272,7 +298,7 @@ export function GeneratingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-8">
+    <div className="h-full bg-background flex items-center justify-center p-8 overflow-auto">
       <Card className="w-full max-w-2xl">
         <CardContent className="p-8 space-y-6">
           <div className="text-center space-y-4">

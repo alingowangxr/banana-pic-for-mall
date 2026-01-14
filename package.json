@@ -1,7 +1,27 @@
 {
   "name": "banana-mall",
-  "private": true,
   "version": "0.1.0",
+  "description": "AI-powered e-commerce detail page generator - 让灵感落地，让回忆有形",
+  "author": "MatrixInspire",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/banana-mall.git"
+  },
+  "homepage": "https://github.com/yourusername/banana-mall#readme",
+  "bugs": {
+    "url": "https://github.com/yourusername/banana-mall/issues"
+  },
+  "keywords": [
+    "tauri",
+    "react",
+    "typescript",
+    "ai",
+    "e-commerce",
+    "gemini",
+    "product-page",
+    "image-generation"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",

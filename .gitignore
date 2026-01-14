@@ -25,3 +25,39 @@ dist-ssr
 
 # Tauri
 src-tauri/target
+src-tauri/gen
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+*.swp
+*.swo
+*~
+.vscode/settings.json
+.idea/
+
+# Build outputs
+*.exe
+*.msi
+*.app
+*.dmg
+*.deb
+*.rpm
+*.AppImage
+
+# Debug
+*.log
+*.pdb
+
+# Temporary files
+*.tmp
+*.temp
+.cache/

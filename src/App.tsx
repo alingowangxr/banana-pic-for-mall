@@ -10,13 +10,14 @@ import { EditorPage } from "@/pages/EditorPage";
 import { SettingsPage } from "@/pages/SettingsPage";
 import { HistoryPage } from "@/pages/HistoryPage";
 import { Button } from "@/components/ui/button";
-import { Settings, History } from "lucide-react";
+import { Settings, History, Moon, Sun } from "lucide-react";
 
 function App() {
   // Initialize Tauri store on mount
   useTauriStore();
-  const { currentStep, setCurrentStep, settings } = useAppStore();
-  const { setTheme } = useTheme();
+  const { currentStep, setCurrentStep, settings, updateSettings } =
+    useAppStore();
+  const { resolvedTheme, setTheme } = useTheme();
 
   // Initialize language and theme from settings
   useEffect(() => {
@@ -49,7 +50,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="h-full bg-background flex flex-col overflow-hidden">
       {/* Global Settings Button */}
       {currentStep !== "generating" &&
         currentStep !== "settings" &&
@@ -77,13 +78,38 @@ function App() {
         )}
 
       {/* Main Content */}
-      <div className="flex-1">{renderPage()}</div>
+      <div className="flex-1 overflow-auto">{renderPage()}</div>
+
+      {/* Theme Toggle Button - Bottom Left (above footer) */}
+      <div className="fixed bottom-16 left-4 z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={async () => {
+            const newTheme = resolvedTheme === "dark" ? "light" : "dark";
+            setTheme(newTheme);
+            // Also update settings
+            await updateSettings({ theme: newTheme });
+          }}
+          className="bg-background/80 backdrop-blur-sm border shadow-lg hover:bg-background"
+          title={resolvedTheme === "dark" ? "切换到浅色模式" : "切换到暗黑模式"}
+        >
+          {resolvedTheme === "dark" ? (
+            <Sun className="h-4 w-4" />
+          ) : (
+            <Moon className="h-4 w-4" />
+          )}
+        </Button>
+      </div>
 
       {/* Brand Footer */}
-      <footer className="border-t bg-card/60 backdrop-blur-sm">
+      <footer className="flex-shrink-0 border-t bg-card/60 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
           <div className="font-medium">
-            灵矩绘境 <span className="text-[10px] uppercase tracking-wide">MatrixInspire</span>
+            灵矩绘境{" "}
+            <span className="text-[10px] uppercase tracking-wide">
+              MatrixInspire
+            </span>
           </div>
           <div className="text-center sm:text-right">
             <span>让灵感落地，让回忆有形</span>
