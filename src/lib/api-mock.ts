@@ -60,6 +60,7 @@ export const mockAPI = {
       amazon: "Amazon",
       taobao: "淘宝",
       jd: "京东",
+      shopee: "蝦皮",
     };
 
     const styleNames = {

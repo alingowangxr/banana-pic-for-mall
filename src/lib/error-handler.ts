@@ -2,6 +2,13 @@
  * 统一的错误处理工具
  */
 
+// V8 引擎特有 API 類型聲明
+declare global {
+  interface ErrorConstructor {
+    captureStackTrace?(targetObject: object, constructorOpt?: Function): void;
+  }
+}
+
 export class AppError extends Error {
   constructor(
     message: string,
@@ -11,7 +18,7 @@ export class AppError extends Error {
   ) {
     super(message);
     this.name = "AppError";
-    // 保持正确的堆栈跟踪
+    // 保持正确的堆栈跟踪 (V8 引擎特有 API)
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, AppError);
     }
@@ -82,7 +89,9 @@ export function showError(message: string, context?: string): void {
  */
 export function showSuccess(message: string): void {
   // 可以替换为 toast 通知
-  console.log("[Success]", message);
+  if (import.meta.env.DEV) {
+    console.log("[Success]", message);
+  }
   // alert(message); // 如果需要立即反馈，可以取消注释
 }
 

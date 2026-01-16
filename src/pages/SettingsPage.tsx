@@ -215,6 +215,64 @@ export function SettingsPage() {
           </CardContent>
         </Card>
 
+        {/* Footer Branding */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t.settings.footerBranding}</CardTitle>
+            <CardDescription>
+              {t.settings.footerBrandingDesc}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="footerBrandName">{t.settings.footerBrandName}</Label>
+                <Input
+                  id="footerBrandName"
+                  value={formData.footerBrandName || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, footerBrandName: e.target.value })
+                  }
+                  placeholder="灵矩绘境"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="footerBrandNameEn">{t.settings.footerBrandNameEn}</Label>
+                <Input
+                  id="footerBrandNameEn"
+                  value={formData.footerBrandNameEn || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, footerBrandNameEn: e.target.value })
+                  }
+                  placeholder="MatrixInspire"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="footerSlogan">{t.settings.footerSlogan}</Label>
+              <Input
+                id="footerSlogan"
+                value={formData.footerSlogan || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, footerSlogan: e.target.value })
+                }
+                placeholder="让灵感落地，让回忆有形"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="footerCode">{t.settings.footerCode}</Label>
+              <Input
+                id="footerCode"
+                value={formData.footerCode || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, footerCode: e.target.value })
+                }
+                placeholder="mxinspire"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Actions */}
         <div className="flex justify-end gap-4">
           <Button variant="outline" onClick={() => setFormData(settings)}>

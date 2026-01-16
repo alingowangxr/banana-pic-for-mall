@@ -128,6 +128,13 @@ export interface Translations {
     reset: string;
     saved: string;
     saveFailed: string;
+    // Footer 品牌設定
+    footerBranding: string;
+    footerBrandingDesc: string;
+    footerBrandName: string;
+    footerBrandNameEn: string;
+    footerSlogan: string;
+    footerCode: string;
   };
 
   // Platforms
@@ -295,6 +302,12 @@ const translations: Record<Language, Translations> = {
       reset: '重置',
       saved: '设置已保存',
       saveFailed: '保存失败，请重试',
+      footerBranding: '页脚品牌',
+      footerBrandingDesc: '自定义页脚显示的品牌信息',
+      footerBrandName: '品牌名称',
+      footerBrandNameEn: '英文名称',
+      footerSlogan: '品牌标语',
+      footerCode: '品牌代码',
     },
     platforms: {
       amazon: 'Amazon',
@@ -451,6 +464,12 @@ const translations: Record<Language, Translations> = {
       reset: '重設',
       saved: '設定已儲存',
       saveFailed: '儲存失敗，請重試',
+      footerBranding: '頁尾品牌',
+      footerBrandingDesc: '自訂頁尾顯示的品牌資訊',
+      footerBrandName: '品牌名稱',
+      footerBrandNameEn: '英文名稱',
+      footerSlogan: '品牌標語',
+      footerCode: '品牌代碼',
     },
     platforms: {
       amazon: 'Amazon',
@@ -607,6 +626,12 @@ const translations: Record<Language, Translations> = {
       reset: 'Reset',
       saved: 'Settings saved',
       saveFailed: 'Save failed, please try again',
+      footerBranding: 'Footer Branding',
+      footerBrandingDesc: 'Customize the branding displayed in the footer',
+      footerBrandName: 'Brand Name',
+      footerBrandNameEn: 'English Name',
+      footerSlogan: 'Slogan',
+      footerCode: 'Brand Code',
     },
     platforms: {
       amazon: 'Amazon',

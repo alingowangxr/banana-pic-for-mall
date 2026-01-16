@@ -71,19 +71,6 @@ export function EditorPage() {
   const mainImages = images.filter((img) => img.type === "main");
   const detailImages = images.filter((img) => img.type === "detail");
 
-  // 调试：输出图片信息
-  useEffect(() => {
-    console.log("主图数量:", mainImages.length);
-    mainImages.forEach((img, idx) => {
-      console.log(`主图 ${idx + 1}:`, {
-        id: img.id,
-        url: img.url,
-        urlLength: img.url?.length,
-        hasUrl: !!img.url,
-      });
-    });
-  }, [mainImages]);
-
   // Auto-scroll carousel
   useEffect(() => {
     if (carouselRef.current && mainImages.length > 0) {

@@ -159,24 +159,11 @@ export function GeneratingPage() {
                   extraInfoSuffix
                 : basePrompt + extraInfoSuffix;
 
-            console.log(`正在生成主图 ${i + 1}/${mainImageCount}...`, {
-              prompt: prompt.substring(0, 100) + "...",
-              hasBaseImage: !!baseImageBase64,
-              baseImageLength: baseImageBase64?.length,
-            });
-
             // 使用editImage确保和上传图片一致，直接传递base64给Google API
             const imageUrl = await api.editImage({
               image: baseImageBase64,
               imageMimeType: baseImageMimeType,
               prompt: prompt,
-            });
-
-            console.log(`主图 ${i + 1} 生成成功:`, {
-              id: `main-${i}`,
-              url: imageUrl,
-              urlLength: imageUrl?.length,
-              hasUrl: !!imageUrl,
             });
 
             if (!imageUrl || imageUrl.trim() === "") {

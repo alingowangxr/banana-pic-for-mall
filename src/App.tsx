@@ -106,15 +106,19 @@ function App() {
       <footer className="flex-shrink-0 border-t bg-card/60 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
           <div className="font-medium">
-            灵矩绘境{" "}
+            {settings.footerBrandName}{" "}
             <span className="text-[10px] uppercase tracking-wide">
-              MatrixInspire
+              {settings.footerBrandNameEn}
             </span>
           </div>
           <div className="text-center sm:text-right">
-            <span>让灵感落地，让回忆有形</span>
-            <span className="mx-2">·</span>
-            <span className="font-mono">mxinspire</span>
+            <span>{settings.footerSlogan}</span>
+            {settings.footerCode && (
+              <>
+                <span className="mx-2">·</span>
+                <span className="font-mono">{settings.footerCode}</span>
+              </>
+            )}
           </div>
         </div>
       </footer>

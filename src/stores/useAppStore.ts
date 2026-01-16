@@ -74,6 +74,11 @@ export interface AppSettings {
   detailImageCount: number; // 详情页图片数量
   brandName: string; // 品牌名称（可选，由用户输入）
   extraInfo: string; // 产品补充信息 / 规格说明（可选）
+  // Footer 品牌資訊
+  footerBrandName: string; // Footer 品牌名稱
+  footerBrandNameEn: string; // Footer 品牌英文名稱
+  footerSlogan: string; // Footer 標語
+  footerCode: string; // Footer 代碼/標識
 }
 
 interface AppState {
@@ -119,6 +124,11 @@ const defaultSettings: AppSettings = {
   detailImageCount: 2, // 默认2张详情页图片
   brandName: "",
   extraInfo: "",
+  // Footer 品牌資訊預設值
+  footerBrandName: "灵矩绘境",
+  footerBrandNameEn: "MatrixInspire",
+  footerSlogan: "让灵感落地，让回忆有形",
+  footerCode: "mxinspire",
 };
 
 export const useAppStore = create<AppState>((set, get) => ({
