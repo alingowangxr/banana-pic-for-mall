@@ -2,10 +2,11 @@ import { create } from "zustand";
 import { Store } from "@tauri-apps/plugin-store";
 
 // Types
-export type Platform = "amazon" | "taobao" | "jd";
+export type Platform = "amazon" | "taobao" | "jd" | "shopee";
 export type Style = "minimal" | "cyber" | "chinese";
 export type Model = "nanobanana" | "nanabanana";
-export type Language = "zh" | "en";
+export type Language = "zh-CN" | "zh-TW" | "en";
+export type ApiProvider = "google" | "zeabur";
 
 export interface Product {
   id: string;
@@ -61,11 +62,13 @@ export interface GenerationHistory extends GeneratedContent {
 export interface AppSettings {
   apiKey: string;
   baseURL: string;
+  apiProvider: ApiProvider; // API 供應商
   defaultPlatform: Platform;
   defaultStyle: Style;
   exportPath: string;
   selectedModel: Model;
-  selectedLanguage: Language;
+  selectedLanguage: Language; // 生成内容的语言
+  uiLanguage: Language; // 介面语言
   theme: "light" | "dark" | "system";
   mainImageCount: number; // 主图数量
   detailImageCount: number; // 详情页图片数量
@@ -103,12 +106,14 @@ interface AppState {
 
 const defaultSettings: AppSettings = {
   apiKey: "",
-  baseURL: "https://api.openai-proxy.org",
+  baseURL: "https://generativelanguage.googleapis.com",
+  apiProvider: "google",
   defaultPlatform: "amazon",
   defaultStyle: "minimal",
   exportPath: "",
   selectedModel: "nanobanana",
-  selectedLanguage: "zh",
+  selectedLanguage: "zh-TW",
+  uiLanguage: "zh-TW",
   theme: "system",
   mainImageCount: 5, // 默认5张主图
   detailImageCount: 2, // 默认2张详情页图片

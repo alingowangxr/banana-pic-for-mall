@@ -42,6 +42,11 @@ export function ConfigPage() {
       description: t.platforms.taobaoDesc,
     },
     { value: "jd", label: t.platforms.jd, description: t.platforms.jdDesc },
+    {
+      value: "shopee",
+      label: t.platforms.shopee,
+      description: t.platforms.shopeeDesc,
+    },
   ];
 
   const STYLES: { value: Style; label: string; description: string }[] = [
@@ -71,7 +76,7 @@ export function ConfigPage() {
     settings.selectedModel || "nanobanana"
   );
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
-    settings.selectedLanguage || "zh"
+    settings.selectedLanguage || "zh-TW"
   );
   const [mainImageCount, setMainImageCount] = useState<number>(
     settings.mainImageCount || 5
@@ -106,13 +111,13 @@ export function ConfigPage() {
       <div className="h-full bg-background flex items-center justify-center">
         <Card>
           <CardContent className="p-6">
-            <p className="text-muted-foreground">未找到产品信息</p>
+            <p className="text-muted-foreground">{t.common.error}</p>
             <Button
               onClick={() => setCurrentStep("upload")}
               className="mt-4"
               variant="outline"
             >
-              返回上传
+              {t.common.back}
             </Button>
           </CardContent>
         </Card>
@@ -305,8 +310,9 @@ export function ConfigPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="zh">中文</SelectItem>
-                    <SelectItem value="en">English</SelectItem>
+                    <SelectItem value="zh-CN">{t.languages["zh-CN"]}</SelectItem>
+                    <SelectItem value="zh-TW">{t.languages["zh-TW"]}</SelectItem>
+                    <SelectItem value="en">{t.languages.en}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -368,18 +374,18 @@ export function ConfigPage() {
         {product.analysis && (
           <Card>
             <CardHeader>
-              <CardTitle>产品分析结果</CardTitle>
+              <CardTitle>{t.config.productAnalysis}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label className="text-sm font-medium">产品类别</Label>
+                <Label className="text-sm font-medium">{t.config.category}</Label>
                 <p className="text-sm text-muted-foreground mt-1">
                   {product.analysis.category}
                 </p>
               </div>
               {product.analysis.suggestions.length > 0 && (
                 <div>
-                  <Label className="text-sm font-medium">上架建议</Label>
+                  <Label className="text-sm font-medium">{t.config.suggestions}</Label>
                   <ul className="list-disc list-inside text-sm text-muted-foreground mt-1 space-y-1">
                     {product.analysis.suggestions.map((suggestion, idx) => (
                       <li key={idx}>{suggestion}</li>
@@ -394,10 +400,10 @@ export function ConfigPage() {
         {/* Actions */}
         <div className="flex justify-between">
           <Button variant="outline" onClick={() => setCurrentStep("upload")}>
-            返回
+            {t.common.back}
           </Button>
           <Button onClick={handleNext} size="lg">
-            开始生成
+            {t.config.startGenerate}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>

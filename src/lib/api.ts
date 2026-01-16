@@ -1,5 +1,5 @@
 import { useAppStore } from "@/stores/useAppStore";
-import type { ProductAnalysis, Platform, Style } from "@/stores/useAppStore";
+import type { ProductAnalysis, Platform, Style, Language } from "@/stores/useAppStore";
 import { mockAPI } from "./api-mock";
 
 export interface GenerateTextParams {
@@ -10,7 +10,7 @@ export interface GenerateTextParams {
   };
   platform: Platform;
   style: Style;
-  language: "zh" | "en";
+  language: Language;
   brandName?: string;
   extraInfo?: string;
 }
@@ -29,11 +29,26 @@ export interface EditImageParams {
   mask?: string; // optional mask for inpainting
 }
 
+// Default URLs for each provider
+const PROVIDER_URLS = {
+  google: "https://generativelanguage.googleapis.com",
+  zeabur: "https://hnd1.aihub.zeabur.ai/gemini",
+};
+
 class NanoBananaAPI {
+  private getApiProvider(): "google" | "zeabur" {
+    const { settings } = useAppStore.getState();
+    return settings.apiProvider || "google";
+  }
+
   private getBaseURL(): string {
     const { settings } = useAppStore.getState();
-    // Default to proxy API for Gemini
-    return settings.baseURL || "https://api.openai-proxy.org";
+    const provider = this.getApiProvider();
+    // Use custom baseURL if provided, otherwise use default for the provider
+    if (settings.baseURL && settings.baseURL.trim() !== "") {
+      return settings.baseURL;
+    }
+    return PROVIDER_URLS[provider];
   }
 
   private getApiKey(): string {
@@ -42,21 +57,37 @@ class NanoBananaAPI {
   }
 
   /**
-   * Get Gemini API endpoint
-   * Uses /google suffix for Gemini models via proxy
+   * Get authentication headers based on the API provider
+   * - Google: uses x-goog-api-key header
+   * - Zeabur: uses both Authorization and x-goog-api-key headers
    */
-  private getGeminiURL(): string {
-    const baseURL = this.getBaseURL();
-    // If using proxy, add /google suffix for Gemini
-    if (baseURL.includes("openai-proxy.org")) {
-      return `${baseURL}/google`;
+  private getAuthHeaders(): Record<string, string> {
+    const apiKey = this.getApiKey();
+    const provider = this.getApiProvider();
+
+    if (provider === "zeabur") {
+      return {
+        "Authorization": `Bearer ${apiKey}`,
+        "x-goog-api-key": apiKey,
+      };
     }
-    // Otherwise assume it's direct Gemini API
-    return baseURL;
+    // Default: Google direct API
+    return {
+      "x-goog-api-key": apiKey,
+    };
   }
 
   /**
-   * Make request to Gemini API (OpenAI compatible format)
+   * Get Gemini API endpoint
+   * Uses direct Google Generative Language API or Zeabur AI Hub
+   */
+  private getGeminiURL(): string {
+    return this.getBaseURL();
+  }
+
+  /**
+   * Make request to Gemini API
+   * Supports both Google direct API and Zeabur AI Hub
    * Made public for use in api-detail.ts
    */
   async requestGemini<T>(
@@ -77,7 +108,7 @@ class NanoBananaAPI {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-goog-api-key": apiKey,
+          ...this.getAuthHeaders(),
         },
         body: JSON.stringify({
           contents,
@@ -190,6 +221,7 @@ class NanoBananaAPI {
         amazon: "Amazon",
         taobao: "淘宝",
         jd: "京东",
+        shopee: "蝦皮購物",
       };
 
       const styleNames = {
@@ -198,7 +230,7 @@ class NanoBananaAPI {
         chinese: "国潮",
       };
 
-      const isChinese = params.language === "zh";
+      const isChinese = params.language.startsWith("zh");
       const brandLine = params.brandName
         ? isChinese
           ? `品牌名：${params.brandName}\n`
@@ -310,6 +342,7 @@ Return in JSON format:
         amazon: "适合Amazon平台，专业产品摄影风格",
         taobao: "适合淘宝平台，营销感强，吸引眼球",
         jd: "适合京东平台，高端品质展示",
+        shopee: "适合蝦皮平台，乾淨白底，可加小促銷標，行動端優先",
       };
 
       const fullPrompt = `${params.prompt}，${stylePrompts[params.style]}，${
@@ -386,22 +419,16 @@ Return in JSON format:
           ? "gemini-3-pro-image-preview"
           : "gemini-2.5-flash-image";
 
-      console.log("Calling Gemini Image Edit API:", {
-        model,
-        mimeType,
-        promptLength: params.prompt.length,
-        imageSize: base64Image.length,
-      });
       const geminiURL = this.getGeminiURL();
 
-      // Direct API call to Gemini
+      // Direct API call to Gemini (supports both Google and Zeabur)
       const response = await fetch(
         `${geminiURL}/v1beta/models/${model}:generateContent`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-goog-api-key": apiKey,
+            ...this.getAuthHeaders(),
           },
           body: JSON.stringify({
             contents: [
@@ -429,19 +456,12 @@ Return in JSON format:
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Gemini API Error:", {
-          status: response.status,
-          statusText: response.statusText,
-          error: errorText,
-        });
         throw new Error(
           `Gemini API Error: ${response.status} ${response.statusText} - ${errorText}`
         );
       }
 
       const result = await response.json();
-      console.log("Gemini API Response:", result);
-
       const parts = result.candidates?.[0]?.content?.parts;
       if (!parts || parts.length === 0) {
         throw new Error("No image generated - empty response");
@@ -450,17 +470,11 @@ Return in JSON format:
       // Find image part in response
       const imagePart = parts.find((part: any) => part.inlineData);
       if (!imagePart?.inlineData) {
-        console.error("Response parts:", parts);
         throw new Error("No image data in response");
       }
 
       const imageData = imagePart.inlineData.data;
       const responseMimeType = imagePart.inlineData.mimeType || "image/png";
-
-      console.log("Image generated successfully:", {
-        mimeType: responseMimeType,
-        dataLength: imageData.length,
-      });
 
       return `data:${responseMimeType};base64,${imageData}`;
     } catch (error) {

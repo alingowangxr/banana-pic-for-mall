@@ -17,7 +17,7 @@ export function GeneratingPage() {
   const platform = settings.defaultPlatform;
   const style = settings.defaultStyle;
   const model = settings.selectedModel || "nanobanana";
-  const language = settings.selectedLanguage || "zh";
+  const language = settings.selectedLanguage || "zh-TW";
   const brandName = settings.brandName?.trim() || "";
   const extraInfo = settings.extraInfo?.trim() || "";
   const [progress, setProgress] = useState(0);
@@ -64,51 +64,74 @@ export function GeneratingPage() {
         setStatus(t.generating.generatingImages);
 
         const mainImages = [];
-        const isChinese = language === "zh";
+        const isChinese = language.startsWith("zh");
         const mainImageCount = settings.mainImageCount || 5;
         // 使用上传图片的base64数据，确保直接传递给Google API
         const baseImageBase64 = product.imageBase64;
         const baseImageMimeType = product.imageMimeType;
 
         // 根据平台和风格生成不同的编辑提示，明确指定语言
-        const basePrompts =
-          platform === "amazon"
-            ? [
-                // Amazon: 极简、白底、无文字
-                isChinese
-                  ? "保持产品完全一致，极简风格，纯白背景，无任何文字和装饰，专业产品摄影，所有文字使用中文"
-                  : "Keep product exactly the same, minimal style, pure white background, no text or decorations, professional product photography, all text in English",
-                isChinese
-                  ? "保持产品完全一致，侧面角度展示，极简风格，纯白背景，所有文字使用中文"
-                  : "Keep product exactly the same, side angle view, minimal style, pure white background, all text in English",
-                isChinese
-                  ? "保持产品完全一致，细节特写，极简风格，纯白背景，突出产品质感，所有文字使用中文"
-                  : "Keep product exactly the same, detail close-up, minimal style, pure white background, highlight product texture, all text in English",
-                isChinese
-                  ? "保持产品完全一致，45度角展示，极简风格，纯白背景，所有文字使用中文"
-                  : "Keep product exactly the same, 45-degree angle view, minimal style, pure white background, all text in English",
-                isChinese
-                  ? "保持产品完全一致，包装展示，极简风格，纯白背景，所有文字使用中文"
-                  : "Keep product exactly the same, packaging display, minimal style, pure white background, all text in English",
-              ]
-            : [
-                // 淘宝/京东: 营销感强，可加标签
-                isChinese
-                  ? "保持产品完全一致，营销风格，可添加促销标签，吸引眼球，所有文字使用中文"
-                  : "Keep product exactly the same, marketing style, can add promotional labels, eye-catching, all text in English",
-                isChinese
-                  ? "保持产品完全一致，侧面展示，营销风格，高对比度，所有文字使用中文"
-                  : "Keep product exactly the same, side view, marketing style, high contrast, all text in English",
-                isChinese
-                  ? "保持产品完全一致，细节特写，营销风格，突出卖点，所有文字使用中文"
-                  : "Keep product exactly the same, detail close-up, marketing style, highlight selling points, all text in English",
-                isChinese
-                  ? "保持产品完全一致，使用场景，营销风格，氛围感强，所有文字使用中文"
-                  : "Keep product exactly the same, usage scene, marketing style, strong atmosphere, all text in English",
-                isChinese
-                  ? "保持产品完全一致，包装展示，营销风格，可添加价格标签，所有文字使用中文"
-                  : "Keep product exactly the same, packaging display, marketing style, can add price labels, all text in English",
-              ];
+        const getBasePrompts = () => {
+          if (platform === "amazon") {
+            // Amazon: 极简、白底、无文字
+            return [
+              isChinese
+                ? "保持产品完全一致，极简风格，纯白背景，无任何文字和装饰，专业产品摄影，所有文字使用中文"
+                : "Keep product exactly the same, minimal style, pure white background, no text or decorations, professional product photography, all text in English",
+              isChinese
+                ? "保持产品完全一致，侧面角度展示，极简风格，纯白背景，所有文字使用中文"
+                : "Keep product exactly the same, side angle view, minimal style, pure white background, all text in English",
+              isChinese
+                ? "保持产品完全一致，细节特写，极简风格，纯白背景，突出产品质感，所有文字使用中文"
+                : "Keep product exactly the same, detail close-up, minimal style, pure white background, highlight product texture, all text in English",
+              isChinese
+                ? "保持产品完全一致，45度角展示，极简风格，纯白背景，所有文字使用中文"
+                : "Keep product exactly the same, 45-degree angle view, minimal style, pure white background, all text in English",
+              isChinese
+                ? "保持产品完全一致，包装展示，极简风格，纯白背景，所有文字使用中文"
+                : "Keep product exactly the same, packaging display, minimal style, pure white background, all text in English",
+            ];
+          } else if (platform === "shopee") {
+            // 蝦皮: 乾淨白底，可加小促銷標，行動端優先，繁體中文
+            return [
+              isChinese
+                ? "保持產品完全一致，乾淨白色背景，簡潔風格，可添加小型促銷角標，適合行動端瀏覽，所有文字使用繁體中文"
+                : "Keep product exactly the same, clean white background, simple style, can add small promotional corner labels, mobile-friendly, all text in English",
+              isChinese
+                ? "保持產品完全一致，側面角度展示，乾淨白背景，適合行動端，所有文字使用繁體中文"
+                : "Keep product exactly the same, side angle view, clean white background, mobile-friendly, all text in English",
+              isChinese
+                ? "保持產品完全一致，細節特寫，乾淨背景，突出產品質感，所有文字使用繁體中文"
+                : "Keep product exactly the same, detail close-up, clean background, highlight product texture, all text in English",
+              isChinese
+                ? "保持產品完全一致，45度角展示，乾淨白背景，可加小促銷標籤，所有文字使用繁體中文"
+                : "Keep product exactly the same, 45-degree angle view, clean white background, can add small promo labels, all text in English",
+              isChinese
+                ? "保持產品完全一致，包裝展示，乾淨白背景，適合蝦皮平台，所有文字使用繁體中文"
+                : "Keep product exactly the same, packaging display, clean white background, suitable for Shopee, all text in English",
+            ];
+          } else {
+            // 淘宝/京东: 营销感强，可加标签
+            return [
+              isChinese
+                ? "保持产品完全一致，营销风格，可添加促销标签，吸引眼球，所有文字使用中文"
+                : "Keep product exactly the same, marketing style, can add promotional labels, eye-catching, all text in English",
+              isChinese
+                ? "保持产品完全一致，侧面展示，营销风格，高对比度，所有文字使用中文"
+                : "Keep product exactly the same, side view, marketing style, high contrast, all text in English",
+              isChinese
+                ? "保持产品完全一致，细节特写，营销风格，突出卖点，所有文字使用中文"
+                : "Keep product exactly the same, detail close-up, marketing style, highlight selling points, all text in English",
+              isChinese
+                ? "保持产品完全一致，使用场景，营销风格，氛围感强，所有文字使用中文"
+                : "Keep product exactly the same, usage scene, marketing style, strong atmosphere, all text in English",
+              isChinese
+                ? "保持产品完全一致，包装展示，营销风格，可添加价格标签，所有文字使用中文"
+                : "Keep product exactly the same, packaging display, marketing style, can add price labels, all text in English",
+            ];
+          }
+        };
+        const basePrompts = getBasePrompts();
 
         // 根据用户设置的数量生成图片
         for (let i = 0; i < mainImageCount; i++) {

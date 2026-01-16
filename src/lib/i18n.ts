@@ -1,4 +1,4 @@
-export type Language = 'zh' | 'en';
+export type Language = 'zh-CN' | 'zh-TW' | 'en';
 
 export interface Translations {
   // Common
@@ -12,7 +12,7 @@ export interface Translations {
     error: string;
     success: string;
   };
-  
+
   // Upload Page
   upload: {
     title: string;
@@ -23,7 +23,7 @@ export interface Translations {
     analyzing: string;
     uploadError: string;
   };
-  
+
   // Config Page
   config: {
     title: string;
@@ -53,7 +53,7 @@ export interface Translations {
     detailImageCount: string;
     detailImageCountDesc: string;
   };
-  
+
   // Generating Page
   generating: {
     title: string;
@@ -65,7 +65,7 @@ export interface Translations {
     complete: string;
     cancel: string;
   };
-  
+
   // Editor Page
   editor: {
     title: string;
@@ -100,13 +100,15 @@ export interface Translations {
     detailImages: string;
     exportFailed: string;
   };
-  
+
   // Settings Page
   settings: {
     title: string;
     description: string;
     apiConfig: string;
     apiConfigDesc: string;
+    apiProvider: string;
+    apiProviderDesc: string;
     apiKey: string;
     baseURL: string;
     baseURLDesc: string;
@@ -114,6 +116,8 @@ export interface Translations {
     preferencesDesc: string;
     defaultPlatform: string;
     defaultStyle: string;
+    uiLanguage: string;
+    uiLanguageDesc: string;
     theme: string;
     themeDesc: string;
     light: string;
@@ -125,7 +129,7 @@ export interface Translations {
     saved: string;
     saveFailed: string;
   };
-  
+
   // Platforms
   platforms: {
     amazon: string;
@@ -134,8 +138,10 @@ export interface Translations {
     taobaoDesc: string;
     jd: string;
     jdDesc: string;
+    shopee: string;
+    shopeeDesc: string;
   };
-  
+
   // Styles
   styles: {
     minimal: string;
@@ -145,7 +151,7 @@ export interface Translations {
     chinese: string;
     chineseDesc: string;
   };
-  
+
   // Models
   models: {
     nanobanana: string;
@@ -153,10 +159,26 @@ export interface Translations {
     nanabanana: string;
     nanabananaDesc: string;
   };
+
+  // API Providers
+  providers: {
+    google: string;
+    googleDesc: string;
+    zeabur: string;
+    zeaburDesc: string;
+  };
+
+  // Languages
+  languages: {
+    'zh-CN': string;
+    'zh-TW': string;
+    en: string;
+  };
 }
 
 const translations: Record<Language, Translations> = {
-  zh: {
+  // 简体中文
+  'zh-CN': {
     common: {
       save: '保存',
       cancel: '取消',
@@ -251,14 +273,18 @@ const translations: Record<Language, Translations> = {
       title: '设置',
       description: '配置 API 和偏好设置',
       apiConfig: 'API 配置',
-      apiConfigDesc: '配置 Gemini API 密钥和代理服务器地址',
+      apiConfigDesc: '配置 Gemini API 供应商和密钥',
+      apiProvider: 'API 供应商',
+      apiProviderDesc: '选择 API 服务供应商',
       apiKey: 'API Key',
-      baseURL: 'Base URL',
-      baseURLDesc: '代理API地址，用于访问Gemini模型。默认: https://api.openai-proxy.org\n注意：Gemini会通过 /google 后缀自动访问',
+      baseURL: 'Base URL（可选）',
+      baseURLDesc: '自定义 API 地址，留空使用默认地址',
       preferences: '偏好设置',
       preferencesDesc: '设置默认平台和风格',
       defaultPlatform: '默认平台',
       defaultStyle: '默认风格',
+      uiLanguage: '介面语言',
+      uiLanguageDesc: '选择应用介面显示语言',
       theme: '主题',
       themeDesc: '选择应用主题',
       light: '浅色',
@@ -277,6 +303,8 @@ const translations: Record<Language, Translations> = {
       taobaoDesc: '适合国内电商，注重营销文案',
       jd: '京东',
       jdDesc: '适合高端产品，注重品质展示',
+      shopee: '虾皮购物',
+      shopeeDesc: '适合东南亚及台湾市场，行动端优先',
     },
     styles: {
       minimal: '极简风格',
@@ -292,7 +320,176 @@ const translations: Record<Language, Translations> = {
       nanabanana: 'NanaBanana',
       nanabananaDesc: 'Gemini 3 Pro Image - 高质量生成',
     },
+    providers: {
+      google: 'Google 直连',
+      googleDesc: '直接调用 Google Gemini API',
+      zeabur: 'Zeabur AI Hub',
+      zeaburDesc: '通过 Zeabur 代理调用，适合网络受限地区',
+    },
+    languages: {
+      'zh-CN': '简体中文',
+      'zh-TW': '繁體中文',
+      en: 'English',
+    },
   },
+
+  // 繁體中文
+  'zh-TW': {
+    common: {
+      save: '儲存',
+      cancel: '取消',
+      back: '返回',
+      next: '下一步',
+      confirm: '確認',
+      loading: '載入中...',
+      error: '錯誤',
+      success: '成功',
+    },
+    upload: {
+      title: '上傳產品圖片',
+      description: '上傳一張產品白底圖，AI 將自動分析產品資訊',
+      dragDrop: '拖曳圖片到這裡，或點擊上傳',
+      clickUpload: '選擇檔案',
+      fileFormat: '支援 JPG、PNG 格式，建議使用白底圖',
+      analyzing: '正在分析產品...',
+      uploadError: '請上傳圖片檔案',
+    },
+    config: {
+      title: '選擇配置',
+      description: '選擇目標平台和詳情頁風格',
+      platform: '目標平台',
+      platformDesc: '選擇產品要上架的平台',
+      style: '詳情頁風格',
+      styleDesc: '選擇你喜歡的詳情頁風格模板',
+      model: 'AI 模型',
+      modelDesc: '選擇使用的圖片生成模型',
+      language: '語言',
+      languageDesc: '選擇生成內容的語言',
+      brand: '品牌名稱（可選）',
+      brandDesc: '如果有自己的品牌，可以在這裡填寫，AI 會在文案和部分圖片中適當加入品牌資訊',
+      brandPlaceholder: '例如：靈矩繪境 / MatrixInspire',
+      extraInfo: '產品補充資訊 / 規格說明',
+      extraInfoDesc: '可填寫材質、適用人群、使用場景、賣點補充等資訊，AI 會在文案和圖片風格中參考這些內容',
+      extraInfoPlaceholder: '例如：食品級矽膠；適合嬰幼兒使用；適合夏季戶外露營；主打輕便和高顏值設計',
+      productAnalysis: '產品分析結果',
+      category: '產品類別',
+      suggestions: '上架建議',
+      startGenerate: '開始生成',
+      imageCount: '圖片數量設定',
+      imageCountDesc: '設定生成的主圖和詳情頁圖片數量',
+      mainImageCount: '主圖數量',
+      mainImageCountDesc: '生成的主圖數量（1-10張）',
+      detailImageCount: '詳情頁圖片數量',
+      detailImageCountDesc: '生成的詳情頁圖片數量（1-5張）',
+    },
+    generating: {
+      title: '正在生成詳情頁',
+      initializing: '正在初始化...',
+      generatingText: '正在生成商品文案...',
+      generatingImages: '正在生成主圖（基於上傳圖片）...',
+      generatingDetail: '正在生成詳情頁內容...',
+      generatingDetailImages: '正在生成詳情頁圖片（3:4比例）...',
+      complete: '生成完成！',
+      cancel: '取消生成',
+    },
+    editor: {
+      title: '編輯詳情頁',
+      export: '匯出',
+      mainImages: '主圖',
+      detailPage: '詳情頁 - 5大核心模組',
+      detailPageDesc: '3:4比例，行動端優化',
+      specifications: '商品規格',
+      textEdit: '文字編輯',
+      imageEdit: '圖片編輯',
+      productTitle: '商品標題',
+      productDescription: '商品描述',
+      productSpecs: '商品規格',
+      imageRedraw: '圖片重繪',
+      imageRedrawDesc: '透過提示詞調整圖片效果',
+      prompt: '提示詞',
+      regenerate: '重新生成',
+      regenerating: '生成中...',
+      clickToEdit: '點擊預覽區域的圖片開始編輯',
+      exportFailed: '匯出失敗，請重試',
+      buyBox: '1. 首屏決策區',
+      valueProposition: '2. 賣點展示區',
+      socialProof: '3. 信任背書區',
+      serviceGuarantee: '4. 服務保障區',
+      crossSell: '5. 關聯推薦區',
+      painPoints: '痛點：',
+      solutions: '解決方案：',
+      reviews: '用戶評價：',
+      shipping: '物流：',
+      returnPolicy: '退換貨：',
+      faq: '常見問題：',
+      recommendations: '推薦商品',
+      detailImages: '詳情頁圖片（3:4比例）',
+    },
+    settings: {
+      title: '設定',
+      description: '配置 API 和偏好設定',
+      apiConfig: 'API 配置',
+      apiConfigDesc: '配置 Gemini API 供應商和金鑰',
+      apiProvider: 'API 供應商',
+      apiProviderDesc: '選擇 API 服務供應商',
+      apiKey: 'API Key',
+      baseURL: 'Base URL（可選）',
+      baseURLDesc: '自訂 API 位址，留空使用預設位址',
+      preferences: '偏好設定',
+      preferencesDesc: '設定預設平台和風格',
+      defaultPlatform: '預設平台',
+      defaultStyle: '預設風格',
+      uiLanguage: '介面語言',
+      uiLanguageDesc: '選擇應用程式介面顯示語言',
+      theme: '主題',
+      themeDesc: '選擇應用程式主題',
+      light: '淺色',
+      dark: '深色',
+      system: '跟隨系統',
+      saveSettings: '儲存設定',
+      saving: '儲存中...',
+      reset: '重設',
+      saved: '設定已儲存',
+      saveFailed: '儲存失敗，請重試',
+    },
+    platforms: {
+      amazon: 'Amazon',
+      amazonDesc: '適合跨境電商，注重產品細節',
+      taobao: '淘寶',
+      taobaoDesc: '適合國內電商，注重行銷文案',
+      jd: '京東',
+      jdDesc: '適合高端產品，注重品質展示',
+      shopee: '蝦皮購物',
+      shopeeDesc: '適合東南亞及台灣市場，行動端優先',
+    },
+    styles: {
+      minimal: '極簡風格',
+      minimalDesc: '簡潔現代，突出產品本身',
+      cyber: '賽博風格',
+      cyberDesc: '科技感強，適合電子產品',
+      chinese: '國潮風格',
+      chineseDesc: '傳統與現代結合，適合國貨',
+    },
+    models: {
+      nanobanana: 'NanoBanana',
+      nanobananaDesc: 'Gemini 2.5 Flash Image - 快速生成',
+      nanabanana: 'NanaBanana',
+      nanabananaDesc: 'Gemini 3 Pro Image - 高品質生成',
+    },
+    providers: {
+      google: 'Google 直連',
+      googleDesc: '直接呼叫 Google Gemini API',
+      zeabur: 'Zeabur AI Hub',
+      zeaburDesc: '透過 Zeabur 代理呼叫，適合網路受限地區',
+    },
+    languages: {
+      'zh-CN': '简体中文',
+      'zh-TW': '繁體中文',
+      en: 'English',
+    },
+  },
+
+  // English
   en: {
     common: {
       save: 'Save',
@@ -326,7 +523,7 @@ const translations: Record<Language, Translations> = {
       languageDesc: 'Select the language for generated content',
       brand: 'Brand Name (Optional)',
       brandDesc: 'If you have your own brand, fill it here and AI will insert it into copy and some images when appropriate',
-      brandPlaceholder: 'e.g. 灵矩绘境 / MatrixInspire',
+      brandPlaceholder: 'e.g. MatrixInspire',
       extraInfo: 'Additional Product Info / Specs',
       extraInfoDesc: 'You can add material, target audience, usage scenarios, extra selling points, etc. AI will reference this when generating copy and image styles',
       extraInfoPlaceholder: 'e.g. Food-grade silicone; suitable for babies; ideal for summer outdoor camping; focuses on lightweight and stylish design',
@@ -388,14 +585,18 @@ const translations: Record<Language, Translations> = {
       title: 'Settings',
       description: 'Configure API and preferences',
       apiConfig: 'API Configuration',
-      apiConfigDesc: 'Configure Gemini API key and proxy server address',
+      apiConfigDesc: 'Configure Gemini API provider and key',
+      apiProvider: 'API Provider',
+      apiProviderDesc: 'Select the API service provider',
       apiKey: 'API Key',
-      baseURL: 'Base URL',
-      baseURLDesc: 'Proxy API address for accessing Gemini models. Default: https://api.openai-proxy.org\nNote: Gemini will be accessed via /google suffix automatically',
+      baseURL: 'Base URL (Optional)',
+      baseURLDesc: 'Custom API address, leave empty to use default',
       preferences: 'Preferences',
       preferencesDesc: 'Set default platform and style',
       defaultPlatform: 'Default Platform',
       defaultStyle: 'Default Style',
+      uiLanguage: 'UI Language',
+      uiLanguageDesc: 'Select application interface language',
       theme: 'Theme',
       themeDesc: 'Select application theme',
       light: 'Light',
@@ -414,6 +615,8 @@ const translations: Record<Language, Translations> = {
       taobaoDesc: 'Suitable for domestic e-commerce, focus on marketing copy',
       jd: 'JD',
       jdDesc: 'Suitable for high-end products, focus on quality display',
+      shopee: 'Shopee',
+      shopeeDesc: 'Suitable for Southeast Asia and Taiwan, mobile-first',
     },
     styles: {
       minimal: 'Minimal Style',
@@ -429,10 +632,21 @@ const translations: Record<Language, Translations> = {
       nanabanana: 'NanaBanana',
       nanabananaDesc: 'Gemini 3 Pro Image - High quality generation',
     },
+    providers: {
+      google: 'Google Direct',
+      googleDesc: 'Direct call to Google Gemini API',
+      zeabur: 'Zeabur AI Hub',
+      zeaburDesc: 'Call via Zeabur proxy, suitable for restricted regions',
+    },
+    languages: {
+      'zh-CN': '简体中文',
+      'zh-TW': '繁體中文',
+      en: 'English',
+    },
   },
 };
 
-let currentLanguage: Language = 'zh';
+let currentLanguage: Language = 'zh-TW';
 
 export function setLanguage(lang: Language) {
   currentLanguage = lang;

@@ -46,7 +46,7 @@ export async function generateDetailPage(
   brandName?: string,
   extraInfo?: string
 ): Promise<DetailPageContent> {
-  const isChinese = language === "zh";
+  const isChinese = language.startsWith("zh");
 
   // Check if API key is available
   const { useAppStore } = await import("@/stores/useAppStore");
@@ -84,6 +84,8 @@ ${brandLine}${extraInfoLine}产品类别：${product.category}
             ? "Amazon（跨境电商）"
             : platform === "taobao"
             ? "淘宝（国内电商）"
+            : platform === "shopee"
+            ? "蝦皮購物（台灣及東南亞市場，行動端優先）"
             : "京东（高端电商）"
         }
 风格：${
@@ -138,6 +140,8 @@ Target Platform: ${
             ? "Amazon (Cross-border)"
             : platform === "taobao"
             ? "Taobao (Domestic)"
+            : platform === "shopee"
+            ? "Shopee (Taiwan & Southeast Asia, Mobile-first)"
             : "JD (Premium)"
         }
 Style: ${

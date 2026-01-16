@@ -21,13 +21,13 @@ function App() {
 
   // Initialize language and theme from settings
   useEffect(() => {
-    if (settings.selectedLanguage) {
-      setLanguage(settings.selectedLanguage);
+    if (settings.uiLanguage) {
+      setLanguage(settings.uiLanguage);
     }
     if (settings.theme) {
       setTheme(settings.theme);
     }
-  }, [settings.selectedLanguage, settings.theme, setTheme]);
+  }, [settings.uiLanguage, settings.theme, setTheme]);
 
   // Render page based on current step
   const renderPage = () => {
