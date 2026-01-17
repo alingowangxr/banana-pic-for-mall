@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useTranslation } from "@/lib/i18n";
 
 interface TextEditPanelProps {
   title: string;
@@ -19,30 +20,32 @@ export function TextEditPanel({
   onDescriptionChange,
   onSpecChange,
 }: TextEditPanelProps) {
+  const t = useTranslation();
+
   return (
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>商品标题</CardTitle>
+          <CardTitle>{t.editor.productTitle}</CardTitle>
         </CardHeader>
         <CardContent>
           <Input
             value={title}
             onChange={(e) => onTitleChange(e.target.value)}
-            placeholder="输入商品标题"
+            placeholder={t.editor.productTitlePlaceholder}
           />
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>商品描述</CardTitle>
+          <CardTitle>{t.editor.productDescription}</CardTitle>
         </CardHeader>
         <CardContent>
           <Textarea
             value={description}
             onChange={(e) => onDescriptionChange(e.target.value)}
-            placeholder="输入商品描述"
+            placeholder={t.editor.productDescriptionPlaceholder}
             rows={6}
           />
         </CardContent>
@@ -50,7 +53,7 @@ export function TextEditPanel({
 
       <Card>
         <CardHeader>
-          <CardTitle>商品规格</CardTitle>
+          <CardTitle>{t.editor.productSpecs}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           {specifications.map((spec, idx) => (
@@ -58,7 +61,7 @@ export function TextEditPanel({
               key={idx}
               value={spec}
               onChange={(e) => onSpecChange(idx, e.target.value)}
-              placeholder={`规格 ${idx + 1}`}
+              placeholder={`${t.editor.spec} ${idx + 1}`}
             />
           ))}
         </CardContent>

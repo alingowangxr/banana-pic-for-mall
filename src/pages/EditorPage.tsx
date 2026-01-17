@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useAppStore } from "@/stores/useAppStore";
+import { useTranslation } from "@/lib/i18n";
 import { api } from "@/lib/api";
 import { exportContent } from "@/lib/export";
 import { toast } from "sonner";
@@ -20,6 +21,7 @@ const isTauri = () =>
 export function EditorPage() {
   const { generatedContent, setGeneratedContent, setCurrentStep, settings } =
     useAppStore();
+  const t = useTranslation();
   const [editingImageId, setEditingImageId] = useState<string | null>(null);
   const [imagePrompt, setImagePrompt] = useState("");
   const [isRegenerating, setIsRegenerating] = useState(false);
@@ -364,8 +366,8 @@ export function EditorPage() {
           <div className="space-y-6">
             <Tabs defaultValue="text" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="text">文本编辑</TabsTrigger>
-                <TabsTrigger value="image">图片编辑</TabsTrigger>
+                <TabsTrigger value="text">{t.editor.textEdit}</TabsTrigger>
+                <TabsTrigger value="image">{t.editor.imageEdit}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="text">

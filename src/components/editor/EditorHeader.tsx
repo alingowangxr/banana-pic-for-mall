@@ -6,6 +6,7 @@ import {
   Monitor,
   Loader2,
 } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
 
 interface EditorHeaderProps {
   isMobileView: boolean;
@@ -22,15 +23,17 @@ export function EditorHeader({
   onExport,
   isExporting,
 }: EditorHeaderProps) {
+  const t = useTranslation();
+
   return (
     <div className="flex-shrink-0 border-b bg-card">
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            返回
+            {t.common.back}
           </Button>
-          <h1 className="text-xl font-semibold">编辑详情页</h1>
+          <h1 className="text-xl font-semibold">{t.editor.title}</h1>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -39,7 +42,7 @@ export function EditorHeader({
             onClick={() => setIsMobileView(true)}
           >
             <Smartphone className="h-4 w-4 mr-2" />
-            手机
+            {t.editor.mobile}
           </Button>
           <Button
             variant={!isMobileView ? "default" : "outline"}
@@ -47,18 +50,18 @@ export function EditorHeader({
             onClick={() => setIsMobileView(false)}
           >
             <Monitor className="h-4 w-4 mr-2" />
-            桌面
+            {t.editor.desktop}
           </Button>
           <Button onClick={onExport} disabled={isExporting}>
             {isExporting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                导出中...
+                {t.editor.exporting}
               </>
             ) : (
               <>
                 <Download className="mr-2 h-4 w-4" />
-                导出
+                {t.editor.export}
               </>
             )}
           </Button>

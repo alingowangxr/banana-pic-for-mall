@@ -217,25 +217,115 @@ Ensure content is authentic, attractive, and matches the style of ${
       jsonText = jsonText.replace(/^```\n?/, "").replace(/\n?```$/, "");
     }
 
-    const generatedContent = JSON.parse(jsonText) as DetailPageContent;
+    const generatedContent = JSON.parse(jsonText);
 
-    // Validate and return
+    // Helper to normalize any value to string
+    const normalizeToString = (value: unknown): string => {
+      if (typeof value === 'string') return value;
+      if (value && typeof value === 'object') {
+        const obj = value as Record<string, unknown>;
+        // Try common keys
+        if (typeof obj.text === 'string') return obj.text;
+        if (typeof obj.name === 'string') return obj.name;
+        if (typeof obj.productName === 'string') return obj.productName;
+        if (typeof obj.title === 'string') return obj.title;
+        if (typeof obj.value === 'string') return obj.value;
+        if (typeof obj.content === 'string') return obj.content;
+        if (typeof obj.question === 'string' && typeof obj.answer === 'string') {
+          return `${obj.question}: ${obj.answer}`;
+        }
+        // Fallback: stringify
+        return JSON.stringify(value);
+      }
+      return String(value || '');
+    };
+
+    // Helper to normalize string arrays
+    const normalizeStringArray = (arr: unknown): string[] => {
+      if (!Array.isArray(arr)) return [];
+      return arr.map(item => normalizeToString(item));
+    };
+
+    // Helper to normalize review objects
+    const normalizeReviews = (arr: unknown): Array<{ text: string; rating: number }> => {
+      if (!Array.isArray(arr)) return [];
+      return arr.map(item => {
+        if (typeof item === 'string') {
+          return { text: item, rating: 5 };
+        }
+        if (item && typeof item === 'object') {
+          const obj = item as Record<string, unknown>;
+          return {
+            text: normalizeToString(obj.text || obj.content || obj.review || item),
+            rating: typeof obj.rating === 'number' ? obj.rating : 5,
+          };
+        }
+        return { text: String(item), rating: 5 };
+      });
+    };
+
+    // Helper to normalize FAQ objects
+    const normalizeFaq = (arr: unknown): Array<{ question: string; answer: string }> => {
+      if (!Array.isArray(arr)) return [];
+      return arr.map(item => {
+        if (typeof item === 'string') {
+          return { question: item, answer: '' };
+        }
+        if (item && typeof item === 'object') {
+          const obj = item as Record<string, unknown>;
+          return {
+            question: normalizeToString(obj.question || obj.q || ''),
+            answer: normalizeToString(obj.answer || obj.a || ''),
+          };
+        }
+        return { question: String(item), answer: '' };
+      });
+    };
+
+    const mockData = getMockDetailPage(product, style, isChinese, brandName);
+
+    // Validate and normalize the response
     return {
-      buyBox:
-        generatedContent.buyBox ||
-        getMockDetailPage(product, style, isChinese, brandName).buyBox,
-      valueProposition:
-        generatedContent.valueProposition ||
-        getMockDetailPage(product, style, isChinese, brandName).valueProposition,
-      socialProof:
-        generatedContent.socialProof ||
-        getMockDetailPage(product, style, isChinese, brandName).socialProof,
-      serviceGuarantee:
-        generatedContent.serviceGuarantee ||
-        getMockDetailPage(product, style, isChinese, brandName).serviceGuarantee,
-      crossSell:
-        generatedContent.crossSell ||
-        getMockDetailPage(product, style, isChinese, brandName).crossSell,
+      buyBox: {
+        title: normalizeToString(generatedContent.buyBox?.title) || mockData.buyBox.title,
+        price: normalizeToString(generatedContent.buyBox?.price) || mockData.buyBox.price,
+        originalPrice: generatedContent.buyBox?.originalPrice
+          ? normalizeToString(generatedContent.buyBox.originalPrice)
+          : mockData.buyBox.originalPrice,
+        cta: normalizeToString(generatedContent.buyBox?.cta) || mockData.buyBox.cta,
+      },
+      valueProposition: {
+        painPoints: normalizeStringArray(generatedContent.valueProposition?.painPoints).length > 0
+          ? normalizeStringArray(generatedContent.valueProposition.painPoints)
+          : mockData.valueProposition.painPoints,
+        solutions: normalizeStringArray(generatedContent.valueProposition?.solutions).length > 0
+          ? normalizeStringArray(generatedContent.valueProposition.solutions)
+          : mockData.valueProposition.solutions,
+        visualizations: normalizeStringArray(generatedContent.valueProposition?.visualizations).length > 0
+          ? normalizeStringArray(generatedContent.valueProposition.visualizations)
+          : mockData.valueProposition.visualizations,
+      },
+      socialProof: {
+        reviews: normalizeReviews(generatedContent.socialProof?.reviews).length > 0
+          ? normalizeReviews(generatedContent.socialProof.reviews)
+          : mockData.socialProof.reviews,
+        salesData: normalizeToString(generatedContent.socialProof?.salesData) || mockData.socialProof.salesData,
+        certifications: normalizeStringArray(generatedContent.socialProof?.certifications).length > 0
+          ? normalizeStringArray(generatedContent.socialProof.certifications)
+          : mockData.socialProof.certifications,
+      },
+      serviceGuarantee: {
+        shipping: normalizeToString(generatedContent.serviceGuarantee?.shipping) || mockData.serviceGuarantee.shipping,
+        returnPolicy: normalizeToString(generatedContent.serviceGuarantee?.returnPolicy) || mockData.serviceGuarantee.returnPolicy,
+        faq: normalizeFaq(generatedContent.serviceGuarantee?.faq).length > 0
+          ? normalizeFaq(generatedContent.serviceGuarantee.faq)
+          : mockData.serviceGuarantee.faq,
+      },
+      crossSell: {
+        recommendations: normalizeStringArray(generatedContent.crossSell?.recommendations).length > 0
+          ? normalizeStringArray(generatedContent.crossSell.recommendations)
+          : mockData.crossSell.recommendations,
+      },
     };
   } catch (error) {
     console.error("Error generating detail page content:", error);

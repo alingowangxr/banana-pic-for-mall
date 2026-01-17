@@ -9,9 +9,10 @@ import { GeneratingPage } from "@/pages/GeneratingPage";
 import { EditorPage } from "@/pages/EditorPage";
 import { SettingsPage } from "@/pages/SettingsPage";
 import { HistoryPage } from "@/pages/HistoryPage";
+import { TemplatesPage } from "@/pages/TemplatesPage";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
-import { Settings, History, Moon, Sun } from "lucide-react";
+import { Settings, History, Moon, Sun, Layers } from "lucide-react";
 
 function App() {
   // Initialize Tauri store on mount
@@ -45,6 +46,8 @@ function App() {
         return <SettingsPage />;
       case "history":
         return <HistoryPage />;
+      case "templates":
+        return <TemplatesPage />;
       default:
         return <UploadPage />;
     }
@@ -52,17 +55,27 @@ function App() {
 
   return (
     <div className="h-full bg-background flex flex-col overflow-hidden">
-      {/* Global Settings Button */}
+      {/* Global Navigation Buttons */}
       {currentStep !== "generating" &&
         currentStep !== "settings" &&
-        currentStep !== "history" && (
+        currentStep !== "history" &&
+        currentStep !== "templates" && (
           <div className="fixed top-4 right-4 z-50 flex gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setCurrentStep("templates")}
+              className="bg-background/80 backdrop-blur-sm border"
+              title="Templates"
+            >
+              <Layers className="h-4 w-4" />
+            </Button>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setCurrentStep("history")}
               className="bg-background/80 backdrop-blur-sm border"
-              title="历史记录"
+              title="History"
             >
               <History className="h-4 w-4" />
             </Button>
@@ -71,7 +84,7 @@ function App() {
               size="icon"
               onClick={() => setCurrentStep("settings")}
               className="bg-background/80 backdrop-blur-sm border"
-              title="设置"
+              title="Settings"
             >
               <Settings className="h-4 w-4" />
             </Button>

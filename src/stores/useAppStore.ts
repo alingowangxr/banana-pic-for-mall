@@ -59,6 +59,30 @@ export interface GenerationHistory extends GeneratedContent {
   createdAt: number; // timestamp
 }
 
+export interface Template {
+  id: string;              // "tmpl-{timestamp}"
+  name: string;            // User-defined name
+  description?: string;    // Optional description
+
+  // Configuration
+  platform: Platform;
+  style: Style;
+  model: Model;
+  language: Language;
+
+  // Optional defaults
+  brandName?: string;
+  mainImageCount?: number;
+  detailImageCount?: number;
+  extraInfo?: string;
+
+  // Metadata
+  createdAt: number;
+  updatedAt: number;
+  usageCount?: number;
+  isFavorite?: boolean;
+}
+
 export interface AppSettings {
   apiKey: string;
   baseURL: string;
@@ -83,7 +107,7 @@ export interface AppSettings {
 
 interface AppState {
   // Current step in the workflow
-  currentStep: "upload" | "config" | "generating" | "editing" | "settings" | "history";
+  currentStep: "upload" | "config" | "generating" | "editing" | "settings" | "history" | "templates";
 
   // Product data
   product: Product | null;
@@ -93,6 +117,9 @@ interface AppState {
 
   // History records
   histories: GenerationHistory[];
+
+  // Templates
+  templates: Template[];
 
   // Settings
   settings: AppSettings;
@@ -107,6 +134,11 @@ interface AppState {
   addHistory: (content: GeneratedContent) => Promise<void>;
   updateSettings: (settings: Partial<AppSettings>) => Promise<void>;
   initializeStore: (store: Store) => void;
+
+  // Template actions
+  addTemplate: (template: Omit<Template, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  updateTemplate: (id: string, updates: Partial<Template>) => Promise<void>;
+  deleteTemplate: (id: string) => Promise<void>;
 }
 
 const defaultSettings: AppSettings = {
@@ -136,6 +168,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   product: null,
   generatedContent: null,
   histories: [],
+  templates: [],
   settings: defaultSettings,
   store: null,
 
@@ -179,6 +212,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     const savedSettings = await store.get<AppSettings>("settings");
     const savedHistories = await store.get<GenerationHistory[]>("histories");
     const savedGenerated = await store.get<GeneratedContent>("generatedContent");
+    const savedTemplates = await store.get<Template[]>("templates");
     if (savedSettings) {
       set({ settings: { ...defaultSettings, ...savedSettings } });
     }
@@ -187,6 +221,9 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
     if (savedGenerated) {
       set({ generatedContent: savedGenerated });
+    }
+    if (savedTemplates) {
+      set({ templates: savedTemplates });
     }
   },
 
@@ -239,6 +276,87 @@ export const useAppStore = create<AppState>((set, get) => ({
       }
     }
   },
+
+  addTemplate: async (templateData) => {
+    const { store, templates } = get();
+    const now = Date.now();
+    const template: Template = {
+      ...templateData,
+      id: `tmpl-${now}`,
+      createdAt: now,
+      updatedAt: now,
+    };
+    const updated = [template, ...templates];
+    set({ templates: updated });
+
+    // Persist to store
+    if (store) {
+      await store.set("templates", updated);
+      await store.save();
+    }
+
+    // Fallback: persist to localStorage
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.setItem(
+          "bananaMallTemplates",
+          JSON.stringify(updated)
+        );
+      } catch (e) {
+        console.warn("Failed to persist templates to localStorage", e);
+      }
+    }
+  },
+
+  updateTemplate: async (id, updates) => {
+    const { store, templates } = get();
+    const updated = templates.map((t) =>
+      t.id === id ? { ...t, ...updates, updatedAt: Date.now() } : t
+    );
+    set({ templates: updated });
+
+    // Persist to store
+    if (store) {
+      await store.set("templates", updated);
+      await store.save();
+    }
+
+    // Fallback: persist to localStorage
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.setItem(
+          "bananaMallTemplates",
+          JSON.stringify(updated)
+        );
+      } catch (e) {
+        console.warn("Failed to persist templates to localStorage", e);
+      }
+    }
+  },
+
+  deleteTemplate: async (id) => {
+    const { store, templates } = get();
+    const updated = templates.filter((t) => t.id !== id);
+    set({ templates: updated });
+
+    // Persist to store
+    if (store) {
+      await store.set("templates", updated);
+      await store.save();
+    }
+
+    // Fallback: persist to localStorage
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.setItem(
+          "bananaMallTemplates",
+          JSON.stringify(updated)
+        );
+      } catch (e) {
+        console.warn("Failed to persist templates to localStorage", e);
+      }
+    }
+  },
 }));
 
 // Fallback hydration for web (no Tauri store)
@@ -262,6 +380,12 @@ if (typeof window !== "undefined") {
     if (savedGenerated) {
       const parsed = JSON.parse(savedGenerated) as GeneratedContent;
       useAppStore.setState({ generatedContent: parsed });
+    }
+
+    const savedTemplates = window.localStorage.getItem("bananaMallTemplates");
+    if (savedTemplates) {
+      const parsed = JSON.parse(savedTemplates) as Template[];
+      useAppStore.setState({ templates: parsed });
     }
   } catch (e) {
     console.warn("Failed to hydrate from localStorage", e);

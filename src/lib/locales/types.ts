@@ -70,6 +70,9 @@ export interface Translations {
   editor: {
     title: string;
     export: string;
+    exporting: string;
+    mobile: string;
+    desktop: string;
     mainImages: string;
     detailPage: string;
     detailPageDesc: string;
@@ -77,8 +80,11 @@ export interface Translations {
     textEdit: string;
     imageEdit: string;
     productTitle: string;
+    productTitlePlaceholder: string;
     productDescription: string;
+    productDescriptionPlaceholder: string;
     productSpecs: string;
+    spec: string;
     imageRedraw: string;
     imageRedrawDesc: string;
     prompt: string;
@@ -179,5 +185,34 @@ export interface Translations {
     'zh-CN': string;
     'zh-TW': string;
     en: string;
+  };
+
+  // Templates
+  templates: {
+    title: string;
+    description: string;
+    empty: string;
+    emptyDesc: string;
+    create: string;
+    createTitle: string;
+    createDesc: string;
+    name: string;
+    namePlaceholder: string;
+    templateDescription: string;
+    templateDescriptionPlaceholder: string;
+    apply: string;
+    edit: string;
+    delete: string;
+    deleteConfirm: string;
+    favorite: string;
+    unfavorite: string;
+    applied: string;
+    saved: string;
+    deleted: string;
+    saveAsTemplate: string;
+    loadFromTemplate: string;
+    usageCount: string;
+    createdAt: string;
+    updatedAt: string;
   };
 }

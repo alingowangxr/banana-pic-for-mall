@@ -132,6 +132,8 @@ class NanoBananaAPI {
    */
   async analyzeProduct(imageFile: File): Promise<ProductAnalysis> {
     const apiKey = this.getApiKey();
+    const { settings } = useAppStore.getState();
+    const platform = settings.defaultPlatform || "amazon";
 
     // Use mock API if no API key is configured
     if (!apiKey) {
@@ -145,7 +147,37 @@ class NanoBananaAPI {
       const mimeType = imageFile.type || "image/jpeg";
 
       // Use Gemini 2.5 Flash for fast analysis
-      const prompt = `请分析这张产品图片，提供以下信息（用中文回答）：
+      // Choose prompt language based on platform:
+      // Amazon → English, Taobao/JD → Simplified Chinese, Shopee → Traditional Chinese
+      const prompt = platform === "amazon"
+        ? `Please analyze this product image and provide the following information (in English):
+1. Product category (one word or phrase)
+2. Product description (2-3 sentences)
+3. Listing suggestions (3-4 items, one sentence each)
+4. Product specifications (5 items, format: attribute: value)
+
+Please return in JSON format as follows:
+{
+  "category": "Product Category",
+  "description": "Product Description",
+  "suggestions": ["Suggestion 1", "Suggestion 2", "Suggestion 3"],
+  "specifications": ["Spec 1", "Spec 2", "Spec 3", "Spec 4", "Spec 5"]
+}`
+        : platform === "shopee"
+        ? `請分析這張產品圖片，提供以下資訊（用繁體中文回答）：
+1. 產品類別（一個詞或短語）
+2. 產品描述（2-3句話）
+3. 上架建議（3-4條，每條一句話）
+4. 產品規格（5條，格式：屬性名：屬性值）
+
+請以JSON格式返回，格式如下：
+{
+  "category": "產品類別",
+  "description": "產品描述",
+  "suggestions": ["建議1", "建議2", "建議3"],
+  "specifications": ["規格1", "規格2", "規格3", "規格4", "規格5"]
+}`
+        : `请分析这张产品图片，提供以下信息（用简体中文回答）：
 1. 产品类别（一个词或短语）
 2. 产品描述（2-3句话）
 3. 上架建议（3-4条，每条一句话）
@@ -305,7 +337,32 @@ Return in JSON format:
         jsonText = jsonText.split("```")[1].split("```")[0].trim();
       }
 
-      return JSON.parse(jsonText);
+      const parsed = JSON.parse(jsonText);
+
+      // Normalize the response - ensure title and description are strings
+      // The API might return objects with productName/description keys instead of flat strings
+      const normalizeToString = (value: unknown): string => {
+        if (typeof value === 'string') return value;
+        if (value && typeof value === 'object') {
+          // Try common keys that might contain the actual string
+          const obj = value as Record<string, unknown>;
+          if (typeof obj.productName === 'string') return obj.productName;
+          if (typeof obj.name === 'string') return obj.name;
+          if (typeof obj.text === 'string') return obj.text;
+          if (typeof obj.value === 'string') return obj.value;
+          // Fallback: stringify the object
+          return JSON.stringify(value);
+        }
+        return String(value || '');
+      };
+
+      return {
+        title: normalizeToString(parsed.title || parsed.productName || parsed.name || ''),
+        description: normalizeToString(parsed.description || parsed.productDescription || ''),
+        specifications: Array.isArray(parsed.specifications)
+          ? parsed.specifications.map((spec: unknown) => normalizeToString(spec))
+          : [],
+      };
     } catch (error) {
       console.error("Gemini text generation error:", error);
       console.warn("Falling back to mock API");

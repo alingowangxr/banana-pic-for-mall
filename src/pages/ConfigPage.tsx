@@ -7,6 +7,7 @@ import {
   Language,
 } from "@/stores/useAppStore";
 import { useTranslation } from "@/lib/i18n";
+import { toast } from "sonner";
 import {
   Card,
   CardContent,
@@ -24,11 +25,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Sparkles, ArrowRight } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Sparkles, ArrowRight, Save, FolderOpen, Layers } from "lucide-react";
+import { CreateTemplateDialog } from "@/components/templates/CreateTemplateDialog";
 
 export function ConfigPage() {
-  const { product, settings, setCurrentStep, updateSettings } = useAppStore();
+  const { product, settings, templates, setCurrentStep, updateSettings, updateTemplate } = useAppStore();
   const t = useTranslation();
+  const [createTemplateDialogOpen, setCreateTemplateDialogOpen] = useState(false);
 
   const PLATFORMS: { value: Platform; label: string; description: string }[] = [
     {
@@ -86,6 +95,28 @@ export function ConfigPage() {
   );
   const [brandName, setBrandName] = useState<string>(settings.brandName || "");
   const [extraInfo, setExtraInfo] = useState<string>(settings.extraInfo || "");
+
+  const handleApplyTemplate = async (templateId: string) => {
+    const template = templates.find((t) => t.id === templateId);
+    if (!template) return;
+
+    // Apply template values to form state
+    setSelectedPlatform(template.platform);
+    setSelectedStyle(template.style);
+    setSelectedModel(template.model);
+    setSelectedLanguage(template.language);
+    setBrandName(template.brandName || "");
+    setMainImageCount(template.mainImageCount || 5);
+    setDetailImageCount(template.detailImageCount || 2);
+    setExtraInfo(template.extraInfo || "");
+
+    // Increment usage count
+    await updateTemplate(template.id, {
+      usageCount: (template.usageCount || 0) + 1,
+    });
+
+    toast.success(t.templates.applied);
+  };
 
   const handleNext = () => {
     if (!product) return;
@@ -398,16 +429,63 @@ export function ConfigPage() {
         )}
 
         {/* Actions */}
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center">
           <Button variant="outline" onClick={() => setCurrentStep("upload")}>
             {t.common.back}
           </Button>
-          <Button onClick={handleNext} size="lg">
-            {t.config.startGenerate}
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+
+          <div className="flex gap-2">
+            {/* Template Actions */}
+            {templates.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">
+                    <FolderOpen className="h-4 w-4 mr-2" />
+                    {t.templates.loadFromTemplate}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {templates.map((template) => (
+                    <DropdownMenuItem
+                      key={template.id}
+                      onClick={() => handleApplyTemplate(template.id)}
+                    >
+                      {template.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+
+            <Button
+              variant="outline"
+              onClick={() => setCreateTemplateDialogOpen(true)}
+            >
+              <Save className="h-4 w-4 mr-2" />
+              {t.templates.saveAsTemplate}
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => setCurrentStep("templates")}
+            >
+              <Layers className="h-4 w-4 mr-2" />
+              {t.templates.title}
+            </Button>
+
+            <Button onClick={handleNext} size="lg">
+              {t.config.startGenerate}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
+
+      {/* Create Template Dialog */}
+      <CreateTemplateDialog
+        open={createTemplateDialogOpen}
+        onOpenChange={setCreateTemplateDialogOpen}
+      />
     </div>
   );
 }

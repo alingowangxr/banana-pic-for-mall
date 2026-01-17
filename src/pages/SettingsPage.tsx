@@ -164,6 +164,7 @@ export function SettingsPage() {
                   <SelectItem value="amazon">{t.platforms.amazon}</SelectItem>
                   <SelectItem value="taobao">{t.platforms.taobao}</SelectItem>
                   <SelectItem value="jd">{t.platforms.jd}</SelectItem>
+                  <SelectItem value="shopee">{t.platforms.shopee}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
