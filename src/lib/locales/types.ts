@@ -1,0 +1,183 @@
+export type Language = 'zh-CN' | 'zh-TW' | 'en';
+
+export interface Translations {
+  // Common
+  common: {
+    save: string;
+    cancel: string;
+    back: string;
+    next: string;
+    confirm: string;
+    loading: string;
+    error: string;
+    success: string;
+  };
+
+  // Upload Page
+  upload: {
+    title: string;
+    description: string;
+    dragDrop: string;
+    clickUpload: string;
+    fileFormat: string;
+    analyzing: string;
+    uploadError: string;
+  };
+
+  // Config Page
+  config: {
+    title: string;
+    description: string;
+    platform: string;
+    platformDesc: string;
+    style: string;
+    styleDesc: string;
+    model: string;
+    modelDesc: string;
+    language: string;
+    languageDesc: string;
+    brand: string;
+    brandDesc: string;
+    brandPlaceholder: string;
+    extraInfo: string;
+    extraInfoDesc: string;
+    extraInfoPlaceholder: string;
+    productAnalysis: string;
+    category: string;
+    suggestions: string;
+    startGenerate: string;
+    imageCount: string;
+    imageCountDesc: string;
+    mainImageCount: string;
+    mainImageCountDesc: string;
+    detailImageCount: string;
+    detailImageCountDesc: string;
+  };
+
+  // Generating Page
+  generating: {
+    title: string;
+    initializing: string;
+    generatingText: string;
+    generatingImages: string;
+    generatingDetail: string;
+    generatingDetailImages: string;
+    complete: string;
+    cancel: string;
+  };
+
+  // Editor Page
+  editor: {
+    title: string;
+    export: string;
+    mainImages: string;
+    detailPage: string;
+    detailPageDesc: string;
+    specifications: string;
+    textEdit: string;
+    imageEdit: string;
+    productTitle: string;
+    productDescription: string;
+    productSpecs: string;
+    imageRedraw: string;
+    imageRedrawDesc: string;
+    prompt: string;
+    regenerate: string;
+    regenerating: string;
+    clickToEdit: string;
+    buyBox: string;
+    valueProposition: string;
+    socialProof: string;
+    serviceGuarantee: string;
+    crossSell: string;
+    painPoints: string;
+    solutions: string;
+    reviews: string;
+    shipping: string;
+    returnPolicy: string;
+    faq: string;
+    recommendations: string;
+    detailImages: string;
+    exportFailed: string;
+  };
+
+  // Settings Page
+  settings: {
+    title: string;
+    description: string;
+    apiConfig: string;
+    apiConfigDesc: string;
+    apiProvider: string;
+    apiProviderDesc: string;
+    apiKey: string;
+    baseURL: string;
+    baseURLDesc: string;
+    preferences: string;
+    preferencesDesc: string;
+    defaultPlatform: string;
+    defaultStyle: string;
+    uiLanguage: string;
+    uiLanguageDesc: string;
+    theme: string;
+    themeDesc: string;
+    light: string;
+    dark: string;
+    system: string;
+    saveSettings: string;
+    saving: string;
+    reset: string;
+    saved: string;
+    saveFailed: string;
+    footerBranding: string;
+    footerBrandingDesc: string;
+    footerBrandName: string;
+    footerBrandNameEn: string;
+    footerSlogan: string;
+    footerCode: string;
+  };
+
+  // Platforms
+  platforms: {
+    amazon: string;
+    amazonDesc: string;
+    taobao: string;
+    taobaoDesc: string;
+    jd: string;
+    jdDesc: string;
+    shopee: string;
+    shopeeDesc: string;
+  };
+
+  // Styles
+  styles: {
+    minimal: string;
+    minimalDesc: string;
+    cyber: string;
+    cyberDesc: string;
+    chinese: string;
+    chineseDesc: string;
+  };
+
+  // Models
+  models: {
+    nanobanana: string;
+    nanobananaDesc: string;
+    nanabanana: string;
+    nanabananaDesc: string;
+  };
+
+  // API Providers
+  providers: {
+    google: string;
+    googleDesc: string;
+    zeabur: string;
+    zeaburDesc: string;
+  };
+
+  // Languages
+  languages: {
+    'zh-CN': string;
+    'zh-TW': string;
+    en: string;
+  };
+}
