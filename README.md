@@ -10,6 +10,7 @@ AI-powered e-commerce detail page generator built with Tauri v2 + React + TypeSc
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue.svg)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3-blue.svg)](https://reactjs.org/)
 [![Tauri](https://img.shields.io/badge/Tauri-2.9-blue.svg)](https://tauri.app/)
+[![Vitest](https://img.shields.io/badge/Vitest-4.0-green.svg)](https://vitest.dev/)
 
 </div>
 
@@ -28,8 +29,10 @@ AI-powered e-commerce detail page generator built with Tauri v2 + React + TypeSc
 - 📝 **详情页生成**：自动生成包含 5 大核心模块的详情页内容
 - 💾 **历史记录**：保存生成历史，支持重新编辑
 - 📤 **一键导出**：导出图片和文案，支持自定义路径
-- 🌐 **多平台支持**：支持 Amazon、淘宝、京东等平台风格
-- 🎯 **多语言支持**：支持中文和英文
+- 🌐 **多平台支持**：Amazon、淘宝、京东、蝦皮購物
+- 🌍 **多语言 UI**：简体中文、繁體中文、English
+- 🎯 **多语言内容**：生成中文或英文产品内容
+- ⚙️ **可配置品牌**：自定义页脚品牌信息
 
 ### 使用案例
 
@@ -56,18 +59,18 @@ AI-powered e-commerce detail page generator built with Tauri v2 + React + TypeSc
 <img width="32%" src="https://github.com/user-attachments/assets/8cb543f3-59b9-4dbc-bbe8-bd920b0e9c08" alt="2026-01-13T08-34-43-105Z_3_main_main-2" style="display: inline-block;" />
 
 
-
-
-
-
-
 ### 技术栈
 
-- **前端**: React 18 + TypeScript + Vite
-- **UI**: Tailwind CSS + Shadcn/UI
-- **桌面框架**: Tauri v2
-- **状态管理**: Zustand
-- **AI 模型**: Google Gemini (支持多种模型)
+| 类别 | 技术 |
+|------|------|
+| **前端框架** | React 18 + TypeScript + Vite |
+| **UI 组件** | Tailwind CSS + Shadcn/UI |
+| **桌面框架** | Tauri v2 |
+| **状态管理** | Zustand |
+| **通知系统** | Sonner |
+| **测试框架** | Vitest + Testing Library |
+| **AI 模型** | Google Gemini (多模型支持) |
+| **API 代理** | Zeabur AI Hub (可选) |
 
 ## 🚀 快速开始
 
@@ -83,7 +86,7 @@ AI-powered e-commerce detail page generator built with Tauri v2 + React + TypeSc
 1. **克隆仓库**
 
 ```bash
-git clone https://github.com/ziguishian/banana-mall.git
+git clone https://github.com/alingowangxr/banana-mall.git
 cd banana-mall
 ```
 
@@ -104,7 +107,18 @@ npm install
 4. **启动服务**
 
 ```bash
+# Web 开发模式
 npm run dev
+
+# Tauri 桌面应用开发模式
+npm run tauri:dev
+```
+
+5. **运行测试**
+
+```bash
+npm run test        # 监听模式
+npm run test:run    # 单次运行
 ```
 
 ## 📁 项目结构
@@ -112,39 +126,69 @@ npm run dev
 ```
 banana-mall/
 ├── src/
-│   ├── components/     # React 组件
-│   │   └── ui/        # Shadcn/UI 组件
-│   ├── lib/           # 工具函数和 API
-│   │   ├── api.ts     # Gemini API 封装
-│   │   ├── api-detail.ts  # 详情页生成逻辑
-│   │   ├── export.ts  # 导出功能
-│   │   └── i18n.ts    # 国际化
-│   ├── pages/         # 页面组件
-│   │   ├── UploadPage.tsx      # 上传页面
-│   │   ├── ConfigPage.tsx      # 配置页面
-│   │   ├── GeneratingPage.tsx  # 生成中页面
-│   │   ├── EditorPage.tsx      # 编辑页面
-│   │   ├── HistoryPage.tsx     # 历史记录
-│   │   └── SettingsPage.tsx    # 设置页面
-│   ├── stores/        # Zustand 状态管理
-│   ├── hooks/         # 自定义 Hooks
-│   ├── App.tsx        # 主应用组件
-│   └── main.tsx       # 入口文件
-├── src-tauri/         # Tauri 后端 (Rust)
-│   ├── src/
-│   │   └── main.rs    # Rust 入口
-│   └── tauri.conf.json # Tauri 配置
-└── public/            # 静态资源
+│   ├── components/
+│   │   ├── editor/           # 编辑器组件
+│   │   │   ├── EditorHeader.tsx
+│   │   │   ├── MobilePreview.tsx
+│   │   │   ├── DesktopPreview.tsx
+│   │   │   ├── TextEditPanel.tsx
+│   │   │   ├── ImageEditPanel.tsx
+│   │   │   └── *.test.tsx    # 组件测试
+│   │   └── ui/               # Shadcn/UI 组件
+│   ├── lib/
+│   │   ├── api.ts            # Gemini API 封装
+│   │   ├── api-detail.ts     # 详情页生成逻辑
+│   │   ├── export.ts         # 导出功能
+│   │   ├── error-handler.ts  # 错误处理
+│   │   ├── i18n.ts           # 国际化入口
+│   │   ├── i18n.test.ts      # i18n 测试
+│   │   └── locales/          # 语言文件
+│   │       ├── types.ts      # 类型定义
+│   │       ├── zh-CN.ts      # 简体中文
+│   │       ├── zh-TW.ts      # 繁體中文
+│   │       └── en.ts         # English
+│   ├── pages/
+│   │   ├── UploadPage.tsx    # 上传页面
+│   │   ├── ConfigPage.tsx    # 配置页面
+│   │   ├── GeneratingPage.tsx # 生成中页面
+│   │   ├── EditorPage.tsx    # 编辑页面
+│   │   ├── HistoryPage.tsx   # 历史记录
+│   │   └── SettingsPage.tsx  # 设置页面
+│   ├── stores/               # Zustand 状态管理
+│   ├── hooks/                # 自定义 Hooks
+│   ├── test/                 # 测试配置
+│   ├── App.tsx               # 主应用组件
+│   └── main.tsx              # 入口文件
+├── src-tauri/                # Tauri 后端 (Rust)
+├── vitest.config.ts          # 测试配置
+└── public/                   # 静态资源
 ```
 
 ## ⚙️ 配置说明
 
 ### API 配置
 
-应用支持自定义 API 端点，可在设置页面配置：
+应用支持两种 API 供应商：
 
-- **API Key**: Google Gemini API Key（必需）
-- **Base URL**: API 代理地址（可选，默认使用代理）
+| 供应商 | 说明 |
+|--------|------|
+| **Google 直连** | 直接调用 Google Gemini API |
+| **Zeabur AI Hub** | 通过代理调用，适合网络受限地区 |
+
+### 支持平台
+
+| 平台 | 特点 |
+|------|------|
+| Amazon | 跨境电商，注重产品细节 |
+| 淘宝 | 国内电商，注重营销文案 |
+| 京东 | 高端产品，注重品质展示 |
+| 蝦皮購物 | 东南亚及台湾，行动端优先 |
+
+### 支持风格
+
+- **极简风格** - 简洁现代，突出产品本身
+- **赛博风格** - 科技感强，适合电子产品
+- **国潮风格** - 传统与现代结合，适合国货
 
 ### 数据存储
 
@@ -155,12 +199,47 @@ banana-mall/
 - 生成历史记录
 - 应用配置
 
-## 🎨 设计系统
+## 📋 开发路线图
 
-- **配色方案**: Zinc（支持明暗主题）
-- **字体**: Inter 字体系列
-- **设计风格**: Vercel/Next.js 极简风格
-- **组件库**: Shadcn/UI
+### ✅ 已完成
+
+- [x] 核心功能：产品分析、文案生成、图片生成
+- [x] 多平台支持：Amazon、淘宝、京东、蝦皮
+- [x] 多语言 UI：简体中文、繁體中文、English
+- [x] API 多供应商：Google 直连、Zeabur AI Hub
+- [x] Toast 通知系统
+- [x] 组件模块化拆分
+- [x] i18n 语言文件拆分
+- [x] 基础测试覆盖 (Vitest)
+- [x] 可配置页脚品牌
+
+### 🚧 规划中
+
+- [ ] 批量处理 - 一次上传多张图片
+- [ ] 模板系统 - 儲存/載入詳情頁模板
+- [ ] 图片编辑器 - 内建裁剪、滤镜、文字叠加
+- [ ] 更多导出格式 - PDF、HTML
+- [ ] 更多平台 - 拼多多、1688、Lazada
+- [ ] 完整测试覆盖 (80%+)
+- [ ] 离线模式支持
+
+## 🧪 测试
+
+```bash
+# 运行所有测试
+npm run test:run
+
+# 监听模式
+npm run test
+
+# 覆盖率报告
+npm run test:coverage
+```
+
+当前测试覆盖：
+- i18n 翻译系统 (10 tests)
+- EditorHeader 组件 (8 tests)
+- TextEditPanel 组件 (8 tests)
 
 ## 🤝 贡献指南
 
@@ -177,11 +256,12 @@ banana-mall/
 - 使用 TypeScript 进行类型检查
 - 遵循 ESLint 代码规范
 - 提交前运行 `npm run build` 确保构建通过
+- 新功能需添加对应测试
 - 保持代码注释清晰
 
 ## 🐛 问题反馈
 
-如遇到问题，请在 [GitHub Issues](https://github.com/ziguishian/banana-mall/issues) 提交。
+如遇到问题，请在 [GitHub Issues](https://github.com/alingowangxr/banana-mall/issues) 提交。
 
 ## 📄 许可证
 
@@ -192,6 +272,9 @@ banana-mall/
 - [Tauri](https://tauri.app/) - 桌面应用框架
 - [Shadcn/UI](https://ui.shadcn.com/) - 组件库
 - [Google Gemini](https://deepmind.google/technologies/gemini/) - AI 模型
+- [Zeabur](https://zeabur.com/) - AI Hub 代理服务
+- [Sonner](https://sonner.emilkowal.ski/) - Toast 通知
+- [Vitest](https://vitest.dev/) - 测试框架
 
 ---
 

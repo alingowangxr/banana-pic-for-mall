@@ -6,11 +6,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/banana-mall.git"
+    "url": "https://github.com/alingowangxr/banana-mall.git"
   },
-  "homepage": "https://github.com/yourusername/banana-mall#readme",
+  "homepage": "https://github.com/alingowangxr/banana-mall#readme",
   "bugs": {
-    "url": "https://github.com/yourusername/banana-mall/issues"
+    "url": "https://github.com/alingowangxr/banana-mall/issues"
   },
   "keywords": [
     "tauri",
