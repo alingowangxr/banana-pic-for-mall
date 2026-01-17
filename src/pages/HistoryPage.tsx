@@ -9,23 +9,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Clock, Trash2 } from "lucide-react";
 import { format } from "date-fns";
+import { useTranslation } from "@/lib/i18n";
 
 export function HistoryPage() {
-  const { histories, setGeneratedContent, setCurrentStep } = useAppStore();
+  const { histories, setGeneratedContent, setCurrentStep, deleteHistory } = useAppStore();
+  const t = useTranslation();
 
   const handleLoadHistory = (history: (typeof histories)[0]) => {
     setGeneratedContent(history);
     setCurrentStep("editing");
-  };
-
-  const handleDeleteHistory = async (id: string) => {
-    const { store, histories: currentHistories } = useAppStore.getState();
-    const updated = currentHistories.filter((h) => h.id !== id);
-    useAppStore.setState({ histories: updated });
-    if (store) {
-      await store.set("histories", updated);
-      await store.save();
-    }
   };
 
   return (
@@ -39,9 +31,9 @@ export function HistoryPage() {
               onClick={() => setCurrentStep("upload")}
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              返回
+              {t.common.back}
             </Button>
-            <h1 className="text-xl font-semibold">历史记录</h1>
+            <h1 className="text-xl font-semibold">{t.history.title}</h1>
           </div>
         </div>
       </div>
@@ -50,13 +42,13 @@ export function HistoryPage() {
         {histories.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
-              <p className="text-muted-foreground">暂无历史记录</p>
+              <p className="text-muted-foreground">{t.history.empty}</p>
               <Button
                 onClick={() => setCurrentStep("upload")}
                 className="mt-4"
                 variant="outline"
               >
-                开始创建
+                {t.history.startCreate}
               </Button>
             </CardContent>
           </Card>
@@ -85,7 +77,7 @@ export function HistoryPage() {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8"
-                      onClick={() => handleDeleteHistory(history.id)}
+                      onClick={() => deleteHistory(history.id)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -102,29 +94,21 @@ export function HistoryPage() {
                     )}
                     <div className="text-sm text-muted-foreground">
                       <p>
-                        平台:{" "}
-                        {history.platform === "amazon"
-                          ? "Amazon"
-                          : history.platform === "taobao"
-                          ? "淘宝"
-                          : "京东"}
+                        {t.history.platform}:{" "}
+                        {t.platforms[history.platform as keyof typeof t.platforms] || history.platform}
                       </p>
                       <p>
-                        风格:{" "}
-                        {history.style === "minimal"
-                          ? "极简"
-                          : history.style === "cyber"
-                          ? "赛博"
-                          : "国潮"}
+                        {t.history.style}:{" "}
+                        {t.styles[history.style as keyof typeof t.styles] || history.style}
                       </p>
-                      <p>图片: {history.images.length} 张</p>
+                      <p>{t.history.images}: {history.images.length}</p>
                     </div>
                     <Button
                       onClick={() => handleLoadHistory(history)}
                       className="w-full"
                       variant="outline"
                     >
-                      查看详情
+                      {t.history.viewDetails}
                     </Button>
                   </div>
                 </CardContent>

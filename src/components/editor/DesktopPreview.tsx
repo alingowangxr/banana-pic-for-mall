@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, Edit2 } from "lucide-react";
 import type { GeneratedContent } from "@/stores/useAppStore";
+import { useTranslation } from "@/lib/i18n";
 
 interface DesktopPreviewProps {
   content: GeneratedContent;
@@ -33,6 +34,7 @@ export function DesktopPreview({
   onSetImageIndex,
   onEditImage,
 }: DesktopPreviewProps) {
+  const t = useTranslation();
   const { texts } = content;
 
   return (
@@ -48,7 +50,7 @@ export function DesktopPreview({
       {/* Main Images Carousel */}
       <Card>
         <CardHeader>
-          <CardTitle>主图</CardTitle>
+          <CardTitle>{t.editor.mainImages}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="relative">
@@ -65,7 +67,7 @@ export function DesktopPreview({
                 >
                   <img
                     src={image.url}
-                    alt={`主图 ${idx + 1}`}
+                    alt={`${t.editor.mainImageAlt} ${idx + 1}`}
                     className="w-full rounded-lg border"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -120,7 +122,7 @@ export function DesktopPreview({
       {/* Detail Images */}
       <Card>
         <CardHeader>
-          <CardTitle>详情页</CardTitle>
+          <CardTitle>{t.editor.detailImages}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {detailImages.map((image) => (
@@ -147,7 +149,7 @@ export function DesktopPreview({
       {/* Specifications */}
       <Card>
         <CardHeader>
-          <CardTitle>商品规格</CardTitle>
+          <CardTitle>{t.editor.specifications}</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">

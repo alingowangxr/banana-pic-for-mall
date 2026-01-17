@@ -105,6 +105,20 @@ export interface Translations {
     recommendations: string;
     detailImages: string;
     exportFailed: string;
+    // Preview labels
+    imageLoadFailed: string;
+    retry: string;
+    buyNow: string;
+    productSellingPoints: string;
+    painPointsTitle: string;
+    solutionsTitle: string;
+    userReviews: string;
+    shippingLabel: string;
+    returnPolicyLabel: string;
+    faqTitle: string;
+    relatedRecommendations: string;
+    mainImageAlt: string;
+    detailImageAlt: string;
   };
 
   // Settings Page
@@ -214,5 +228,16 @@ export interface Translations {
     usageCount: string;
     createdAt: string;
     updatedAt: string;
+  };
+
+  // History Page
+  history: {
+    title: string;
+    empty: string;
+    startCreate: string;
+    platform: string;
+    style: string;
+    images: string;
+    viewDetails: string;
   };
 }

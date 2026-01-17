@@ -132,6 +132,7 @@ interface AppState {
   setProduct: (product: Product | null) => void;
   setGeneratedContent: (content: GeneratedContent | null) => void;
   addHistory: (content: GeneratedContent) => Promise<void>;
+  deleteHistory: (id: string) => Promise<void>;
   updateSettings: (settings: Partial<AppSettings>) => Promise<void>;
   initializeStore: (store: Store) => void;
 
@@ -235,6 +236,27 @@ export const useAppStore = create<AppState>((set, get) => ({
       createdAt: Date.now(),
     };
     const updated = [entry, ...histories].slice(0, 20); // keep last 20
+    set({ histories: updated });
+    if (store) {
+      await store.set("histories", updated);
+      await store.save();
+    }
+    // Fallback: persist to localStorage for web environment
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.setItem(
+          "bananaMallHistories",
+          JSON.stringify(updated)
+        );
+      } catch (e) {
+        console.warn("Failed to persist histories to localStorage", e);
+      }
+    }
+  },
+
+  deleteHistory: async (id) => {
+    const { store, histories } = get();
+    const updated = histories.filter((h) => h.id !== id);
     set({ histories: updated });
     if (store) {
       await store.set("histories", updated);

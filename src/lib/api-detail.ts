@@ -46,7 +46,8 @@ export async function generateDetailPage(
   brandName?: string,
   extraInfo?: string
 ): Promise<DetailPageContent> {
-  const isChinese = language.startsWith("zh");
+  const isTraditionalChinese = language === "zh-TW";
+  const isSimplifiedChinese = language === "zh-CN";
 
   // Check if API key is available
   const { useAppStore } = await import("@/stores/useAppStore");
@@ -55,25 +56,88 @@ export async function generateDetailPage(
   if (!apiKey) {
     // Fallback to mock data if no API key
     console.warn("No API key, using mock detail page content");
-    return getMockDetailPage(product, style, isChinese, brandName);
+    return getMockDetailPage(product, style, language, brandName);
   }
 
   try {
     // Use Gemini API to generate detail page content
     const brandLine = brandName
-      ? isChinese
+      ? isTraditionalChinese
+        ? `品牌名：${brandName}\n`
+        : isSimplifiedChinese
         ? `品牌名：${brandName}\n`
         : `Brand Name: ${brandName}\n`
       : "";
     const extraInfoLine =
       extraInfo && extraInfo.trim().length > 0
-        ? isChinese
+        ? isTraditionalChinese
+          ? `補充資訊：${extraInfo.trim()}\n`
+          : isSimplifiedChinese
           ? `补充信息：${extraInfo.trim()}\n`
           : `Additional Info: ${extraInfo.trim()}\n`
         : "";
 
-    const prompt = isChinese
-      ? `请为以下产品生成完整的电商详情页内容（5大核心模块）：
+    const prompt = isTraditionalChinese
+      ? `請為以下產品生成完整的電商詳情頁內容（5大核心模組），所有文字請使用繁體中文：
+
+${brandLine}${extraInfoLine}產品類別：${product.category}
+產品描述：${product.analysis?.description || ""}
+產品規格：${product.analysis?.specifications?.join(", ") || ""}
+
+目標平台：${
+          platform === "amazon"
+            ? "Amazon（跨境電商）"
+            : platform === "taobao"
+            ? "淘寶（國內電商）"
+            : platform === "shopee"
+            ? "蝦皮購物（台灣及東南亞市場，行動端優先）"
+            : "京東（高端電商）"
+        }
+風格：${
+          style === "minimal"
+            ? "極簡風格"
+            : style === "cyber"
+            ? "賽博風格"
+            : "國潮風格"
+        }
+
+請生成以下5大核心模組的詳細內容，以JSON格式返回，所有文字必須使用繁體中文：
+
+1. 首屏決策區（Buy Box）：
+   - title: 商品標題（包含品牌、核心關鍵詞、屬性、場景）
+   - price: 當前價格
+   - originalPrice: 原價（可選）
+   - cta: 行動按鈕文字
+
+2. 賣點展示區（Value Proposition）：
+   - painPoints: 用戶痛點陣列（3-5條）
+   - solutions: 產品解決方案陣列（3-5條）
+   - visualizations: 視覺化展示建議陣列（3條）
+
+3. 信任背書區（Social Proof）：
+   - reviews: 用戶評價陣列，每個包含text（評價內容）和rating（評分1-5）
+   - salesData: 銷量數據描述
+   - certifications: 認證證書陣列
+
+4. 服務保障區（Service & Guarantee）：
+   - shipping: 物流政策描述
+   - returnPolicy: 退換貨政策描述
+   - faq: 常見問題陣列，每個包含question和answer
+
+5. 關聯推薦區（Cross-sell）：
+   - recommendations: 推薦商品陣列（3-5條）
+
+請確保內容真實、吸引人，符合${
+          platform === "amazon"
+            ? "Amazon"
+            : platform === "taobao"
+            ? "淘寶"
+            : platform === "shopee"
+            ? "蝦皮購物"
+            : "京東"
+        }平台的風格特點。返回純JSON格式，不要包含markdown程式碼區塊。所有生成的文字內容必須使用繁體中文。`
+      : isSimplifiedChinese
+      ? `请为以下产品生成完整的电商详情页内容（5大核心模块），所有文字请使用简体中文：
 
 ${brandLine}${extraInfoLine}产品类别：${product.category}
 产品描述：${product.analysis?.description || ""}
@@ -85,7 +149,7 @@ ${brandLine}${extraInfoLine}产品类别：${product.category}
             : platform === "taobao"
             ? "淘宝（国内电商）"
             : platform === "shopee"
-            ? "蝦皮購物（台灣及東南亞市場，行動端優先）"
+            ? "虾皮购物（台湾及东南亚市场，移动端优先）"
             : "京东（高端电商）"
         }
 风格：${
@@ -96,7 +160,7 @@ ${brandLine}${extraInfoLine}产品类别：${product.category}
             : "国潮风格"
         }
 
-请生成以下5大核心模块的详细内容，以JSON格式返回：
+请生成以下5大核心模块的详细内容，以JSON格式返回，所有文字必须使用简体中文：
 
 1. 首屏决策区（Buy Box）：
    - title: 商品标题（包含品牌、核心关键词、属性、场景）
@@ -127,8 +191,10 @@ ${brandLine}${extraInfoLine}产品类别：${product.category}
             ? "Amazon"
             : platform === "taobao"
             ? "淘宝"
+            : platform === "shopee"
+            ? "虾皮购物"
             : "京东"
-        }平台的风格特点。返回纯JSON格式，不要包含markdown代码块。`
+        }平台的风格特点。返回纯JSON格式，不要包含markdown代码块。所有生成的文字内容必须使用简体中文。`
       : `Please generate complete e-commerce detail page content (5 core modules) for the following product:
 
 ${brandLine}${extraInfoLine}Product Category: ${product.category}
@@ -282,7 +348,7 @@ Ensure content is authentic, attractive, and matches the style of ${
       });
     };
 
-    const mockData = getMockDetailPage(product, style, isChinese, brandName);
+    const mockData = getMockDetailPage(product, style, language, brandName);
 
     // Validate and normalize the response
     return {
@@ -330,7 +396,7 @@ Ensure content is authentic, attractive, and matches the style of ${
   } catch (error) {
     console.error("Error generating detail page content:", error);
     console.warn("Falling back to mock data");
-    return getMockDetailPage(product, style, isChinese);
+    return getMockDetailPage(product, style, language, brandName);
   }
 }
 
@@ -340,72 +406,115 @@ Ensure content is authentic, attractive, and matches the style of ${
 function getMockDetailPage(
   product: Product,
   style: Style,
-  isChinese: boolean,
+  language: Language,
   brandName?: string
 ): DetailPageContent {
+  const isTraditionalChinese = language === "zh-TW";
+  const isSimplifiedChinese = language === "zh-CN";
+
+  // Style names for different languages
+  const getStyleName = () => {
+    if (isTraditionalChinese) {
+      return style === "minimal" ? "極簡" : style === "cyber" ? "賽博" : "國潮";
+    }
+    if (isSimplifiedChinese) {
+      return style === "minimal" ? "极简" : style === "cyber" ? "赛博" : "国潮";
+    }
+    return style === "minimal" ? "Minimal" : style === "cyber" ? "Cyber" : "Chinese Traditional";
+  };
+
   return {
     buyBox: {
-      title: isChinese
-        ? `${brandName ? brandName + " " : ""}${product.category} - 高品质${
-            style === "minimal" ? "极简" : style === "cyber" ? "赛博" : "国潮"
-          }风格`
-        : `${brandName ? brandName + " " : ""}${product.category} - High Quality`,
-      price: isChinese ? "¥299" : "$29.99",
-      originalPrice: isChinese ? "¥399" : "$39.99",
-      cta: isChinese ? "立即购买" : "Buy Now",
+      title: isTraditionalChinese
+        ? `${brandName ? brandName + " " : ""}${product.category} - 高品質${getStyleName()}風格`
+        : isSimplifiedChinese
+        ? `${brandName ? brandName + " " : ""}${product.category} - 高品质${getStyleName()}风格`
+        : `${brandName ? brandName + " " : ""}${product.category} - High Quality ${getStyleName()} Style`,
+      price: isTraditionalChinese || isSimplifiedChinese ? "¥299" : "$29.99",
+      originalPrice: isTraditionalChinese || isSimplifiedChinese ? "¥399" : "$39.99",
+      cta: isTraditionalChinese ? "立即購買" : isSimplifiedChinese ? "立即购买" : "Buy Now",
     },
     valueProposition: {
-      painPoints: isChinese
+      painPoints: isTraditionalChinese
+        ? ["痛點1", "痛點2", "痛點3"]
+        : isSimplifiedChinese
         ? ["痛点1", "痛点2", "痛点3"]
         : ["Pain Point 1", "Pain Point 2", "Pain Point 3"],
-      solutions: isChinese
+      solutions: isTraditionalChinese
+        ? ["解決方案1", "解決方案2", "解決方案3"]
+        : isSimplifiedChinese
         ? ["解决方案1", "解决方案2", "解决方案3"]
         : ["Solution 1", "Solution 2", "Solution 3"],
-      visualizations: isChinese
+      visualizations: isTraditionalChinese
+        ? ["視覺化1", "視覺化2", "視覺化3"]
+        : isSimplifiedChinese
         ? ["可视化1", "可视化2", "可视化3"]
         : ["Visualization 1", "Visualization 2", "Visualization 3"],
     },
     socialProof: {
-      reviews: [
-        { text: isChinese ? "很好用！" : "Great product!", rating: 5 },
-        { text: isChinese ? "质量不错" : "Good quality", rating: 4 },
-        { text: isChinese ? "值得推荐" : "Worth recommending", rating: 5 },
-      ],
-      salesData: isChinese ? "月销1000+" : "1000+ sold this month",
-      certifications: isChinese
+      reviews: isTraditionalChinese
+        ? [
+            { text: "很好用！", rating: 5 },
+            { text: "品質不錯", rating: 4 },
+            { text: "值得推薦", rating: 5 },
+          ]
+        : isSimplifiedChinese
+        ? [
+            { text: "很好用！", rating: 5 },
+            { text: "质量不错", rating: 4 },
+            { text: "值得推荐", rating: 5 },
+          ]
+        : [
+            { text: "Great product!", rating: 5 },
+            { text: "Good quality", rating: 4 },
+            { text: "Worth recommending", rating: 5 },
+          ],
+      salesData: isTraditionalChinese
+        ? "月銷1000+"
+        : isSimplifiedChinese
+        ? "月销1000+"
+        : "1000+ sold this month",
+      certifications: isTraditionalChinese
+        ? ["品質認證", "專利證書"]
+        : isSimplifiedChinese
         ? ["质检认证", "专利证书"]
         : ["Quality Certification", "Patent Certificate"],
     },
     serviceGuarantee: {
-      shipping: isChinese
+      shipping: isTraditionalChinese
+        ? "全台免運，3-5天送達"
+        : isSimplifiedChinese
         ? "全国包邮，3-5天送达"
         : "Free shipping, 3-5 days delivery",
-      returnPolicy: isChinese ? "7天无理由退换货" : "7-day return policy",
-      faq: [
-        {
-          question: isChinese ? "如何清洗？" : "How to clean?",
-          answer: isChinese ? "可用清水清洗" : "Can be cleaned with water",
-        },
-        {
-          question: isChinese ? "是否包邮？" : "Is shipping free?",
-          answer: isChinese
-            ? "是的，全国包邮"
-            : "Yes, free shipping nationwide",
-        },
-        {
-          question: isChinese ? "质保多久？" : "Warranty period?",
-          answer: isChinese ? "1年质保" : "1 year warranty",
-        },
-      ],
+      returnPolicy: isTraditionalChinese
+        ? "7天無理由退換貨"
+        : isSimplifiedChinese
+        ? "7天无理由退换货"
+        : "7-day return policy",
+      faq: isTraditionalChinese
+        ? [
+            { question: "如何清洗？", answer: "可用清水清洗" },
+            { question: "是否免運？", answer: "是的，全台免運" },
+            { question: "保固多久？", answer: "1年保固" },
+          ]
+        : isSimplifiedChinese
+        ? [
+            { question: "如何清洗？", answer: "可用清水清洗" },
+            { question: "是否包邮？", answer: "是的，全国包邮" },
+            { question: "质保多久？", answer: "1年质保" },
+          ]
+        : [
+            { question: "How to clean?", answer: "Can be cleaned with water" },
+            { question: "Is shipping free?", answer: "Yes, free shipping nationwide" },
+            { question: "Warranty period?", answer: "1 year warranty" },
+          ],
     },
     crossSell: {
-      recommendations: isChinese
+      recommendations: isTraditionalChinese
+        ? ["推薦商品1", "推薦商品2", "推薦商品3"]
+        : isSimplifiedChinese
         ? ["推荐商品1", "推荐商品2", "推荐商品3"]
-        : [
-            "Recommended Product 1",
-            "Recommended Product 2",
-            "Recommended Product 3",
-          ],
+        : ["Recommended Product 1", "Recommended Product 2", "Recommended Product 3"],
     },
   };
 }

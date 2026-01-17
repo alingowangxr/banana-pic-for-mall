@@ -1,6 +1,6 @@
 # BananaMall 開發路線圖
 
-> 最後更新: 2025-01-17
+> 最後更新: 2026-01-18
 
 ## ✅ 已完成
 
@@ -47,6 +47,24 @@
 - [x] 模板持久化（Tauri store + localStorage fallback）
 - [x] 收藏功能（優先顯示收藏模板）
 
+### Phase 4.5 - 國際化完善 ✨ NEW (2026-01-18)
+- [x] 預覽元件 i18n 支援
+  - [x] MobilePreview 硬編碼中文改為 i18n（15 處）
+  - [x] DesktopPreview 硬編碼中文改為 i18n（4 處）
+  - [x] 新增 14 個翻譯鍵（imageLoadFailed、retry、buyNow 等）
+- [x] 圖片生成繁體中文支援
+  - [x] GeneratingPage 主圖 prompt 區分繁體/簡體/英文
+  - [x] GeneratingPage 詳情圖 prompt 區分繁體/簡體/英文
+  - [x] api-detail.ts 詳情頁內容 prompt 繁體中文版本
+- [x] Mock 資料多語言支援
+  - [x] api-mock.ts 新增 mockData 物件（zh-TW、zh-CN、en）
+  - [x] getMockDetailPage 函數區分繁體/簡體/英文
+  - [x] 繁體中文使用台灣用語（免運、保固 vs 包郵、質保）
+- [x] 歷史紀錄頁面 i18n
+  - [x] 新增 history 翻譯區塊（title、empty、startCreate 等）
+  - [x] HistoryPage 使用 i18n 翻譯
+  - [x] 平台/風格名稱複用 platforms/styles 翻譯
+
 ### Bug Fixes
 - [x] 修復 Gemini API 回傳物件結構問題（Objects are not valid as React child）
   - [x] generateText 回應正規化
@@ -54,6 +72,10 @@
 - [x] 設定頁面預設平台新增蝦皮選項
 - [x] AI 模型名稱優化（NanaBanana → Nano Banana Pro）
 - [x] 圖片文字語言說明文字修正
+- [x] 歷史紀錄刪除持久化問題 ✨ NEW (2026-01-18)
+  - [x] 新增 useAppStore.deleteHistory 函數
+  - [x] 同時處理 Tauri store 和 localStorage fallback
+  - [x] 修復 web 環境下刪除後重啟瀏覽器資料還在的問題
 
 ---
 
@@ -154,6 +176,7 @@
 |------|------|--------|
 | Phase 1-3 | 18 項 | - |
 | Phase 4 (模板系統) | 12 項 | - |
-| Bug Fixes | 5 項 | - |
+| Phase 4.5 (國際化完善) | 13 項 | - |
+| Bug Fixes | 8 項 | - |
 | Phase 5-9 | - | 34 項 |
-| **總計** | **35 項** | **34 項** |
+| **總計** | **51 項** | **34 項** |

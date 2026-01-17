@@ -2,6 +2,7 @@ import { RefObject } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Image as ImageIcon, Loader2 } from "lucide-react";
 import type { GeneratedContent } from "@/stores/useAppStore";
+import { useTranslation } from "@/lib/i18n";
 
 interface MobilePreviewProps {
   content: GeneratedContent;
@@ -32,6 +33,7 @@ export function MobilePreview({
   onImageError,
   onRetryImage,
 }: MobilePreviewProps) {
+  const t = useTranslation();
   const { texts, detailPage } = content;
 
   return (
@@ -66,14 +68,14 @@ export function MobilePreview({
                     <div className="w-full aspect-square bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300">
                       <div className="text-center p-4">
                         <ImageIcon className="h-12 w-12 mx-auto mb-2 text-gray-400" />
-                        <p className="text-sm text-gray-500 mb-1">图片加载失败</p>
-                        <p className="text-xs text-gray-400 mb-2">主图 {idx + 1}</p>
+                        <p className="text-sm text-gray-500 mb-1">{t.editor.imageLoadFailed}</p>
+                        <p className="text-xs text-gray-400 mb-2">{t.editor.mainImageAlt} {idx + 1}</p>
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => onRetryImage(image.id)}
                         >
-                          重试
+                          {t.editor.retry}
                         </Button>
                       </div>
                     </div>
@@ -86,7 +88,7 @@ export function MobilePreview({
                       )}
                       <img
                         src={image.url}
-                        alt={`主图 ${idx + 1}`}
+                        alt={`${t.editor.mainImageAlt} ${idx + 1}`}
                         className="w-full aspect-square object-cover"
                         onLoad={() => onImageLoad(image.id)}
                         onError={() => onImageError(image.id)}
@@ -141,7 +143,7 @@ export function MobilePreview({
               )}
             </div>
             <Button className="w-full mt-3 bg-red-600 hover:bg-red-700">
-              {detailPage.buyBox.cta || "立即购买"}
+              {detailPage.buyBox.cta || t.editor.buyNow}
             </Button>
           </div>
         )}
@@ -149,7 +151,7 @@ export function MobilePreview({
         {/* Specifications */}
         {texts.specifications && texts.specifications.length > 0 && (
           <div className="p-4 border-b bg-white">
-            <h2 className="text-base font-semibold mb-3">商品规格</h2>
+            <h2 className="text-base font-semibold mb-3">{t.editor.specifications}</h2>
             <div className="space-y-2">
               {texts.specifications.map((spec, idx) => (
                 <div key={idx} className="flex items-start gap-2 text-sm">
@@ -164,10 +166,10 @@ export function MobilePreview({
         {/* Value Proposition */}
         {detailPage?.valueProposition && (
           <div className="p-4 border-b bg-white">
-            <h2 className="text-base font-semibold mb-3">产品卖点</h2>
+            <h2 className="text-base font-semibold mb-3">{t.editor.productSellingPoints}</h2>
             {detailPage.valueProposition.painPoints && (
               <div className="mb-4">
-                <h3 className="text-sm font-medium text-gray-600 mb-2">用户痛点</h3>
+                <h3 className="text-sm font-medium text-gray-600 mb-2">{t.editor.painPointsTitle}</h3>
                 <div className="space-y-2">
                   {detailPage.valueProposition.painPoints.map(
                     (point: string, idx: number) => (
@@ -182,7 +184,7 @@ export function MobilePreview({
             )}
             {detailPage.valueProposition.solutions && (
               <div>
-                <h3 className="text-sm font-medium text-gray-600 mb-2">解决方案</h3>
+                <h3 className="text-sm font-medium text-gray-600 mb-2">{t.editor.solutionsTitle}</h3>
                 <div className="space-y-2">
                   {detailPage.valueProposition.solutions.map(
                     (solution: string, idx: number) => (
@@ -201,7 +203,7 @@ export function MobilePreview({
         {/* Social Proof */}
         {detailPage?.socialProof && (
           <div className="p-4 border-b bg-white">
-            <h2 className="text-base font-semibold mb-3">用户评价</h2>
+            <h2 className="text-base font-semibold mb-3">{t.editor.userReviews}</h2>
             {detailPage.socialProof.salesData && (
               <div className="text-sm text-gray-600 mb-3">
                 {detailPage.socialProof.salesData}
@@ -236,22 +238,22 @@ export function MobilePreview({
         {/* Service Guarantee */}
         {detailPage?.serviceGuarantee && (
           <div className="p-4 border-b bg-white">
-            <h2 className="text-base font-semibold mb-3">服务保障</h2>
+            <h2 className="text-base font-semibold mb-3">{t.editor.serviceGuarantee}</h2>
             {detailPage.serviceGuarantee.shipping && (
               <div className="mb-2 text-sm text-gray-700">
-                <span className="font-medium">物流：</span>
+                <span className="font-medium">{t.editor.shippingLabel}</span>
                 {detailPage.serviceGuarantee.shipping}
               </div>
             )}
             {detailPage.serviceGuarantee.returnPolicy && (
               <div className="mb-3 text-sm text-gray-700">
-                <span className="font-medium">退换货：</span>
+                <span className="font-medium">{t.editor.returnPolicyLabel}</span>
                 {detailPage.serviceGuarantee.returnPolicy}
               </div>
             )}
             {detailPage.serviceGuarantee.faq && (
               <div className="space-y-3">
-                <h3 className="text-sm font-medium text-gray-600">常见问题</h3>
+                <h3 className="text-sm font-medium text-gray-600">{t.editor.faqTitle}</h3>
                 {detailPage.serviceGuarantee.faq.map(
                   (faq: { question: string; answer: string }, idx: number) => (
                     <div key={idx} className="text-sm">
@@ -274,7 +276,7 @@ export function MobilePreview({
               <div key={image.id} className="w-full">
                 <img
                   src={image.url}
-                  alt={`详情 ${idx + 1}`}
+                  alt={`${t.editor.detailImageAlt} ${idx + 1}`}
                   className="w-full object-cover"
                 />
               </div>
@@ -285,7 +287,7 @@ export function MobilePreview({
         {/* Cross-sell */}
         {detailPage?.crossSell?.recommendations && (
           <div className="p-4 bg-gray-50 border-t">
-            <h2 className="text-base font-semibold mb-3">相关推荐</h2>
+            <h2 className="text-base font-semibold mb-3">{t.editor.relatedRecommendations}</h2>
             <div className="space-y-2">
               {detailPage.crossSell.recommendations.map(
                 (rec: string, idx: number) => (

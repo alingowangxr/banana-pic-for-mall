@@ -64,7 +64,8 @@ export function GeneratingPage() {
         setStatus(t.generating.generatingImages);
 
         const mainImages = [];
-        const isChinese = language.startsWith("zh");
+        const isTraditionalChinese = language === "zh-TW";
+        const isSimplifiedChinese = language === "zh-CN";
         const mainImageCount = settings.mainImageCount || 5;
         // 使用上传图片的base64数据，确保直接传递给Google API
         const baseImageBase64 = product.imageBase64;
@@ -72,63 +73,89 @@ export function GeneratingPage() {
 
         // 根据平台和风格生成不同的编辑提示，明确指定语言
         const getBasePrompts = () => {
+          // 根据语言选择对应的文字说明
+          const getLangSuffix = () => {
+            if (isTraditionalChinese) return "所有文字使用繁體中文";
+            if (isSimplifiedChinese) return "所有文字使用简体中文";
+            return "all text in English";
+          };
+          const langSuffix = getLangSuffix();
+
           if (platform === "amazon") {
             // Amazon: 极简、白底、无文字
-            return [
-              isChinese
-                ? "保持产品完全一致，极简风格，纯白背景，无任何文字和装饰，专业产品摄影，所有文字使用中文"
-                : "Keep product exactly the same, minimal style, pure white background, no text or decorations, professional product photography, all text in English",
-              isChinese
-                ? "保持产品完全一致，侧面角度展示，极简风格，纯白背景，所有文字使用中文"
-                : "Keep product exactly the same, side angle view, minimal style, pure white background, all text in English",
-              isChinese
-                ? "保持产品完全一致，细节特写，极简风格，纯白背景，突出产品质感，所有文字使用中文"
-                : "Keep product exactly the same, detail close-up, minimal style, pure white background, highlight product texture, all text in English",
-              isChinese
-                ? "保持产品完全一致，45度角展示，极简风格，纯白背景，所有文字使用中文"
-                : "Keep product exactly the same, 45-degree angle view, minimal style, pure white background, all text in English",
-              isChinese
-                ? "保持产品完全一致，包装展示，极简风格，纯白背景，所有文字使用中文"
-                : "Keep product exactly the same, packaging display, minimal style, pure white background, all text in English",
-            ];
+            return isTraditionalChinese
+              ? [
+                  `保持產品完全一致，極簡風格，純白背景，無任何文字和裝飾，專業產品攝影，${langSuffix}`,
+                  `保持產品完全一致，側面角度展示，極簡風格，純白背景，${langSuffix}`,
+                  `保持產品完全一致，細節特寫，極簡風格，純白背景，突出產品質感，${langSuffix}`,
+                  `保持產品完全一致，45度角展示，極簡風格，純白背景，${langSuffix}`,
+                  `保持產品完全一致，包裝展示，極簡風格，純白背景，${langSuffix}`,
+                ]
+              : isSimplifiedChinese
+              ? [
+                  `保持产品完全一致，极简风格，纯白背景，无任何文字和装饰，专业产品摄影，${langSuffix}`,
+                  `保持产品完全一致，侧面角度展示，极简风格，纯白背景，${langSuffix}`,
+                  `保持产品完全一致，细节特写，极简风格，纯白背景，突出产品质感，${langSuffix}`,
+                  `保持产品完全一致，45度角展示，极简风格，纯白背景，${langSuffix}`,
+                  `保持产品完全一致，包装展示，极简风格，纯白背景，${langSuffix}`,
+                ]
+              : [
+                  `Keep product exactly the same, minimal style, pure white background, no text or decorations, professional product photography, ${langSuffix}`,
+                  `Keep product exactly the same, side angle view, minimal style, pure white background, ${langSuffix}`,
+                  `Keep product exactly the same, detail close-up, minimal style, pure white background, highlight product texture, ${langSuffix}`,
+                  `Keep product exactly the same, 45-degree angle view, minimal style, pure white background, ${langSuffix}`,
+                  `Keep product exactly the same, packaging display, minimal style, pure white background, ${langSuffix}`,
+                ];
           } else if (platform === "shopee") {
-            // 蝦皮: 乾淨白底，可加小促銷標，行動端優先，繁體中文
-            return [
-              isChinese
-                ? "保持產品完全一致，乾淨白色背景，簡潔風格，可添加小型促銷角標，適合行動端瀏覽，所有文字使用繁體中文"
-                : "Keep product exactly the same, clean white background, simple style, can add small promotional corner labels, mobile-friendly, all text in English",
-              isChinese
-                ? "保持產品完全一致，側面角度展示，乾淨白背景，適合行動端，所有文字使用繁體中文"
-                : "Keep product exactly the same, side angle view, clean white background, mobile-friendly, all text in English",
-              isChinese
-                ? "保持產品完全一致，細節特寫，乾淨背景，突出產品質感，所有文字使用繁體中文"
-                : "Keep product exactly the same, detail close-up, clean background, highlight product texture, all text in English",
-              isChinese
-                ? "保持產品完全一致，45度角展示，乾淨白背景，可加小促銷標籤，所有文字使用繁體中文"
-                : "Keep product exactly the same, 45-degree angle view, clean white background, can add small promo labels, all text in English",
-              isChinese
-                ? "保持產品完全一致，包裝展示，乾淨白背景，適合蝦皮平台，所有文字使用繁體中文"
-                : "Keep product exactly the same, packaging display, clean white background, suitable for Shopee, all text in English",
-            ];
+            // 蝦皮: 乾淨白底，可加小促銷標，行動端優先
+            return isTraditionalChinese
+              ? [
+                  `保持產品完全一致，乾淨白色背景，簡潔風格，可添加小型促銷角標，適合行動端瀏覽，${langSuffix}`,
+                  `保持產品完全一致，側面角度展示，乾淨白背景，適合行動端，${langSuffix}`,
+                  `保持產品完全一致，細節特寫，乾淨背景，突出產品質感，${langSuffix}`,
+                  `保持產品完全一致，45度角展示，乾淨白背景，可加小促銷標籤，${langSuffix}`,
+                  `保持產品完全一致，包裝展示，乾淨白背景，適合蝦皮平台，${langSuffix}`,
+                ]
+              : isSimplifiedChinese
+              ? [
+                  `保持产品完全一致，干净白色背景，简洁风格，可添加小型促销角标，适合移动端浏览，${langSuffix}`,
+                  `保持产品完全一致，侧面角度展示，干净白背景，适合移动端，${langSuffix}`,
+                  `保持产品完全一致，细节特写，干净背景，突出产品质感，${langSuffix}`,
+                  `保持产品完全一致，45度角展示，干净白背景，可加小促销标签，${langSuffix}`,
+                  `保持产品完全一致，包装展示，干净白背景，适合虾皮平台，${langSuffix}`,
+                ]
+              : [
+                  `Keep product exactly the same, clean white background, simple style, can add small promotional corner labels, mobile-friendly, ${langSuffix}`,
+                  `Keep product exactly the same, side angle view, clean white background, mobile-friendly, ${langSuffix}`,
+                  `Keep product exactly the same, detail close-up, clean background, highlight product texture, ${langSuffix}`,
+                  `Keep product exactly the same, 45-degree angle view, clean white background, can add small promo labels, ${langSuffix}`,
+                  `Keep product exactly the same, packaging display, clean white background, suitable for Shopee, ${langSuffix}`,
+                ];
           } else {
             // 淘宝/京东: 营销感强，可加标签
-            return [
-              isChinese
-                ? "保持产品完全一致，营销风格，可添加促销标签，吸引眼球，所有文字使用中文"
-                : "Keep product exactly the same, marketing style, can add promotional labels, eye-catching, all text in English",
-              isChinese
-                ? "保持产品完全一致，侧面展示，营销风格，高对比度，所有文字使用中文"
-                : "Keep product exactly the same, side view, marketing style, high contrast, all text in English",
-              isChinese
-                ? "保持产品完全一致，细节特写，营销风格，突出卖点，所有文字使用中文"
-                : "Keep product exactly the same, detail close-up, marketing style, highlight selling points, all text in English",
-              isChinese
-                ? "保持产品完全一致，使用场景，营销风格，氛围感强，所有文字使用中文"
-                : "Keep product exactly the same, usage scene, marketing style, strong atmosphere, all text in English",
-              isChinese
-                ? "保持产品完全一致，包装展示，营销风格，可添加价格标签，所有文字使用中文"
-                : "Keep product exactly the same, packaging display, marketing style, can add price labels, all text in English",
-            ];
+            return isTraditionalChinese
+              ? [
+                  `保持產品完全一致，營銷風格，可添加促銷標籤，吸引眼球，${langSuffix}`,
+                  `保持產品完全一致，側面展示，營銷風格，高對比度，${langSuffix}`,
+                  `保持產品完全一致，細節特寫，營銷風格，突出賣點，${langSuffix}`,
+                  `保持產品完全一致，使用場景，營銷風格，氛圍感強，${langSuffix}`,
+                  `保持產品完全一致，包裝展示，營銷風格，可添加價格標籤，${langSuffix}`,
+                ]
+              : isSimplifiedChinese
+              ? [
+                  `保持产品完全一致，营销风格，可添加促销标签，吸引眼球，${langSuffix}`,
+                  `保持产品完全一致，侧面展示，营销风格，高对比度，${langSuffix}`,
+                  `保持产品完全一致，细节特写，营销风格，突出卖点，${langSuffix}`,
+                  `保持产品完全一致，使用场景，营销风格，氛围感强，${langSuffix}`,
+                  `保持产品完全一致，包装展示，营销风格，可添加价格标签，${langSuffix}`,
+                ]
+              : [
+                  `Keep product exactly the same, marketing style, can add promotional labels, eye-catching, ${langSuffix}`,
+                  `Keep product exactly the same, side view, marketing style, high contrast, ${langSuffix}`,
+                  `Keep product exactly the same, detail close-up, marketing style, highlight selling points, ${langSuffix}`,
+                  `Keep product exactly the same, usage scene, marketing style, strong atmosphere, ${langSuffix}`,
+                  `Keep product exactly the same, packaging display, marketing style, can add price labels, ${langSuffix}`,
+                ];
           }
         };
         const basePrompts = getBasePrompts();
@@ -146,14 +173,18 @@ export function GeneratingPage() {
             const basePrompt = basePrompts[i % basePrompts.length];
             const extraInfoSuffix =
               extraInfo && extraInfo.length > 0
-                ? isChinese
+                ? isTraditionalChinese
+                  ? `，整體畫面風格需要呼應以下產品補充資訊：${extraInfo}`
+                  : isSimplifiedChinese
                   ? `，整体画面风格需要呼应以下产品补充信息：${extraInfo}`
                   : `, overall visual style should reflect the following additional product info: ${extraInfo}`
                 : "";
             const prompt =
               brandName && platform !== "amazon" && i % 2 === 0
                 ? basePrompt +
-                  (isChinese
+                  (isTraditionalChinese
+                    ? `，在畫面合適位置加入品牌名稱「${brandName}」的小標籤`
+                    : isSimplifiedChinese
                     ? `，在画面合适位置加入品牌名称「${brandName}」的小标签`
                     : `, subtly include brand name "${brandName}" as a small promotional label in the image`) +
                   extraInfoSuffix
@@ -212,13 +243,21 @@ export function GeneratingPage() {
 
         const detailImages = [];
         const detailImageCount = settings.detailImageCount || 2;
-        const detailPrompts = isChinese
+        const detailPrompts = isTraditionalChinese
           ? [
-              "保持产品完全一致，详情页长图，3:4比例，包含5大核心模块内容，移动端优化，所有文字使用中文",
-              "保持产品完全一致，产品规格可视化展示图，3:4比例，所有文字使用中文",
-              "保持产品完全一致，产品使用场景图，3:4比例，所有文字使用中文",
-              "保持产品完全一致，产品特点对比图，3:4比例，所有文字使用中文",
-              "保持产品完全一致，产品细节展示图，3:4比例，所有文字使用中文",
+              "保持產品完全一致，詳情頁長圖，3:4比例，包含5大核心模組內容，行動端優化，所有文字使用繁體中文",
+              "保持產品完全一致，產品規格視覺化展示圖，3:4比例，所有文字使用繁體中文",
+              "保持產品完全一致，產品使用場景圖，3:4比例，所有文字使用繁體中文",
+              "保持產品完全一致，產品特點對比圖，3:4比例，所有文字使用繁體中文",
+              "保持產品完全一致，產品細節展示圖，3:4比例，所有文字使用繁體中文",
+            ]
+          : isSimplifiedChinese
+          ? [
+              "保持产品完全一致，详情页长图，3:4比例，包含5大核心模块内容，移动端优化，所有文字使用简体中文",
+              "保持产品完全一致，产品规格可视化展示图，3:4比例，所有文字使用简体中文",
+              "保持产品完全一致，产品使用场景图，3:4比例，所有文字使用简体中文",
+              "保持产品完全一致，产品特点对比图，3:4比例，所有文字使用简体中文",
+              "保持产品完全一致，产品细节展示图，3:4比例，所有文字使用简体中文",
             ]
           : [
               "Keep product exactly the same, detail page long image, 3:4 ratio, includes 5 core modules, mobile optimized, all text in English",
@@ -235,14 +274,18 @@ export function GeneratingPage() {
           const basePrompt = detailPrompts[i % detailPrompts.length];
           const extraInfoSuffix =
             extraInfo && extraInfo.length > 0
-              ? isChinese
+              ? isTraditionalChinese
+                ? `，在內容和佈局上需要呼應以下產品補充資訊：${extraInfo}`
+                : isSimplifiedChinese
                 ? `，在内容和布局上需要呼应以下产品补充信息：${extraInfo}`
                 : `, content and layout should reflect the following additional product info: ${extraInfo}`
               : "";
           const prompt =
             brandName && i === 0
               ? basePrompt +
-                (isChinese
+                (isTraditionalChinese
+                  ? `，在畫面中自然露出品牌名稱「${brandName}」，與賣點文案風格一致`
+                  : isSimplifiedChinese
                   ? `，在画面中自然露出品牌名称「${brandName}」，与卖点文案风格一致`
                   : `, naturally reveal brand name "${brandName}" in the layout, consistent with selling point copy`) +
                 extraInfoSuffix
