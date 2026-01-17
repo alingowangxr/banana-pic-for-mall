@@ -14,6 +14,7 @@ import {
 import { Settings, Save, ArrowLeft } from "lucide-react";
 import { Platform, Style, ApiProvider, Language } from "@/stores/useAppStore";
 import { useTranslation, setLanguage } from "@/lib/i18n";
+import { toast } from "sonner";
 
 export function SettingsPage() {
   const { settings, updateSettings, setCurrentStep } = useAppStore();
@@ -25,10 +26,10 @@ export function SettingsPage() {
     setIsSaving(true);
     try {
       await updateSettings(formData);
-      alert(t.settings.saved);
+      toast.success(t.settings.saved);
     } catch (err) {
       console.error("Save error:", err);
-      alert(t.settings.saveFailed);
+      toast.error(t.settings.saveFailed);
     } finally {
       setIsSaving(false);
     }

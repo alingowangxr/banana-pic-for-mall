@@ -1,6 +1,7 @@
 /**
  * 统一的错误处理工具
  */
+import { toast } from "sonner";
 
 // V8 引擎特有 API 類型聲明
 declare global {
@@ -74,25 +75,37 @@ export function handleError(error: unknown, context?: string): string {
 }
 
 /**
- * 错误提示（可以集成 toast 库）
+ * 错误提示
  */
 export function showError(message: string, context?: string): void {
-  // 简单的 alert，可以替换为 toast 通知
   if (import.meta.env.DEV) {
     console.error(`[${context || "Error"}]`, message);
   }
-  alert(message);
+  toast.error(message);
 }
 
 /**
  * 成功提示
  */
 export function showSuccess(message: string): void {
-  // 可以替换为 toast 通知
   if (import.meta.env.DEV) {
     console.log("[Success]", message);
   }
-  // alert(message); // 如果需要立即反馈，可以取消注释
+  toast.success(message);
+}
+
+/**
+ * 信息提示
+ */
+export function showInfo(message: string): void {
+  toast.info(message);
+}
+
+/**
+ * 警告提示
+ */
+export function showWarning(message: string): void {
+  toast.warning(message);
 }
 
 /**

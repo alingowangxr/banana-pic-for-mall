@@ -1,4 +1,5 @@
 import type { GeneratedContent } from "@/stores/useAppStore";
+import { toast } from "sonner";
 
 const isTauri = () =>
   typeof window !== "undefined" && "__TAURI_IPC__" in window;
@@ -76,7 +77,7 @@ async function exportTauri(
     await writeFile(imagePath, new Uint8Array(imageData));
   }
 
-  alert(`导出成功！文件保存在：${exportDir}`);
+  toast.success(`导出成功！文件保存在：${exportDir}`);
 }
 
 /**
@@ -115,7 +116,7 @@ async function exportWeb(content: GeneratedContent): Promise<void> {
     downloadBlob(blob, `${timestamp}_${i + 1}_${extension}_${image.id}.png`);
   }
 
-  alert("导出成功！文件已开始下载");
+  toast.success("导出成功！文件已开始下载");
 }
 
 /**

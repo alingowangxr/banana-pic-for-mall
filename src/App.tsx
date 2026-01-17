@@ -10,6 +10,7 @@ import { EditorPage } from "@/pages/EditorPage";
 import { SettingsPage } from "@/pages/SettingsPage";
 import { HistoryPage } from "@/pages/HistoryPage";
 import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/sonner";
 import { Settings, History, Moon, Sun } from "lucide-react";
 
 function App() {
@@ -122,6 +123,9 @@ function App() {
           </div>
         </div>
       </footer>
+
+      {/* Toast Notifications */}
+      <Toaster position="top-center" richColors />
     </div>
   );
 }
