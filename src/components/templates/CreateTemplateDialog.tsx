@@ -123,6 +123,11 @@ export function CreateTemplateDialog({
     { value: "minimal", label: t.styles.minimal },
     { value: "cyber", label: t.styles.cyber },
     { value: "chinese", label: t.styles.chinese },
+    { value: "japanese", label: t.styles.japanese },
+    { value: "luxury", label: t.styles.luxury },
+    { value: "natural", label: t.styles.natural },
+    { value: "cute", label: t.styles.cute },
+    { value: "apple", label: t.styles.apple },
   ];
 
   return (

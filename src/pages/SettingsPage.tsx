@@ -186,6 +186,11 @@ export function SettingsPage() {
                   <SelectItem value="minimal">{t.styles.minimal}</SelectItem>
                   <SelectItem value="cyber">{t.styles.cyber}</SelectItem>
                   <SelectItem value="chinese">{t.styles.chinese}</SelectItem>
+                  <SelectItem value="japanese">{t.styles.japanese}</SelectItem>
+                  <SelectItem value="luxury">{t.styles.luxury}</SelectItem>
+                  <SelectItem value="natural">{t.styles.natural}</SelectItem>
+                  <SelectItem value="cute">{t.styles.cute}</SelectItem>
+                  <SelectItem value="apple">{t.styles.apple}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

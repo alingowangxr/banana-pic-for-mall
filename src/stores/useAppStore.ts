@@ -3,7 +3,7 @@ import { Store } from "@tauri-apps/plugin-store";
 
 // Types
 export type Platform = "amazon" | "taobao" | "jd" | "shopee";
-export type Style = "minimal" | "cyber" | "chinese";
+export type Style = "minimal" | "cyber" | "chinese" | "japanese" | "luxury" | "natural" | "cute" | "apple";
 export type Model = "nanobanana" | "nanabanana";
 export type Language = "zh-CN" | "zh-TW" | "en";
 export type ApiProvider = "google" | "zeabur";

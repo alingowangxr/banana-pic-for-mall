@@ -260,6 +260,11 @@ Please return in JSON format as follows:
         minimal: "极简",
         cyber: "赛博",
         chinese: "国潮",
+        japanese: "日系清新",
+        luxury: "轻奢高端",
+        natural: "自然有机",
+        cute: "可爱萌系",
+        apple: "Apple 科技风",
       };
 
       const isChinese = params.language.startsWith("zh");
@@ -393,6 +398,11 @@ Return in JSON format:
         minimal: "极简风格，简洁现代，突出产品本身，干净背景",
         cyber: "赛博风格，科技感强，未来感，炫酷",
         chinese: "国潮风格，传统与现代结合，文化元素",
+        japanese: "日系清新风格，柔和淡雅，文艺气息，清新自然",
+        luxury: "轻奢高端风格，精致优雅，高级质感，奢华氛围",
+        natural: "自然有机风格，清新自然，绿色环保，原生态感",
+        cute: "可爱萌系风格，活泼可爱，粉嫩色调，童趣元素",
+        apple: "Apple科技风格，极简纯净，大量留白，高级灰白配色，产品悬浮展示",
       };
 
       const platformPrompts = {

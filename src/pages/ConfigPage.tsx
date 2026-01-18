@@ -74,6 +74,31 @@ export function ConfigPage() {
       label: t.styles.chinese,
       description: t.styles.chineseDesc,
     },
+    {
+      value: "japanese",
+      label: t.styles.japanese,
+      description: t.styles.japaneseDesc,
+    },
+    {
+      value: "luxury",
+      label: t.styles.luxury,
+      description: t.styles.luxuryDesc,
+    },
+    {
+      value: "natural",
+      label: t.styles.natural,
+      description: t.styles.naturalDesc,
+    },
+    {
+      value: "cute",
+      label: t.styles.cute,
+      description: t.styles.cuteDesc,
+    },
+    {
+      value: "apple",
+      label: t.styles.apple,
+      description: t.styles.appleDesc,
+    },
   ];
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>(
     settings.defaultPlatform

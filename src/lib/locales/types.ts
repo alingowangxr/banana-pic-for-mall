@@ -176,6 +176,16 @@ export interface Translations {
     cyberDesc: string;
     chinese: string;
     chineseDesc: string;
+    japanese: string;
+    japaneseDesc: string;
+    luxury: string;
+    luxuryDesc: string;
+    natural: string;
+    naturalDesc: string;
+    cute: string;
+    cuteDesc: string;
+    apple: string;
+    appleDesc: string;
   };
 
   // Models

@@ -65,6 +65,22 @@
   - [x] HistoryPage 使用 i18n 翻譯
   - [x] 平台/風格名稱複用 platforms/styles 翻譯
 
+### Phase 4.6 - 風格系統擴展 ✨ NEW (2026-01-18)
+- [x] 新增 5 款詳情頁風格（原有 3 款 → 8 款）
+  - [x] 日系清新（japanese）- 美妝、文具、生活雜貨
+  - [x] 輕奢高端（luxury）- 珠寶、精品、高端護膚
+  - [x] 自然有機（natural）- 食品、茶葉、有機護膚
+  - [x] 可愛萌系（cute）- 母嬰、兒童用品、寵物
+  - [x] Apple 科技風（apple）- 3C 數碼、智慧穿戴、科技配件
+- [x] 更新 Style type 定義（useAppStore.ts）
+- [x] 更新 i18n 翻譯（zh-TW、zh-CN、en）
+- [x] 更新 API prompt 風格描述（api.ts、api-detail.ts）
+- [x] 更新 Mock 資料風格名稱（api-mock.ts）
+- [x] 更新所有頁面風格選項
+  - [x] ConfigPage.tsx
+  - [x] SettingsPage.tsx
+  - [x] CreateTemplateDialog.tsx
+
 ### Bug Fixes
 - [x] 修復 Gemini API 回傳物件結構問題（Objects are not valid as React child）
   - [x] generateText 回應正規化
@@ -108,11 +124,11 @@
 - [ ] Mercado Libre
 
 #### 更多風格模板
-- [ ] 日系清新風
+- [x] 日系清新風 ✅ (Phase 4.6 已完成)
 - [ ] 歐美簡約風
 - [ ] 韓系時尚風
-- [ ] 母嬰溫馨風
-- [ ] 3C 科技風
+- [x] 母嬰溫馨風 ✅ (Phase 4.6 已完成 - 可愛萌系)
+- [x] 3C 科技風 ✅ (Phase 4.6 已完成 - Apple 科技風)
 
 ### Phase 8 - 進階功能
 
@@ -177,6 +193,7 @@
 | Phase 1-3 | 18 項 | - |
 | Phase 4 (模板系統) | 12 項 | - |
 | Phase 4.5 (國際化完善) | 13 項 | - |
+| Phase 4.6 (風格擴展) | 11 項 | - |
 | Bug Fixes | 8 項 | - |
-| Phase 5-9 | - | 34 項 |
-| **總計** | **51 項** | **34 項** |
+| Phase 5-9 | - | 31 項 |
+| **總計** | **62 項** | **31 項** |

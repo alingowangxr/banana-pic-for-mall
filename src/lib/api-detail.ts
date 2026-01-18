@@ -98,7 +98,17 @@ ${brandLine}${extraInfoLine}產品類別：${product.category}
             ? "極簡風格"
             : style === "cyber"
             ? "賽博風格"
-            : "國潮風格"
+            : style === "chinese"
+            ? "國潮風格"
+            : style === "japanese"
+            ? "日系清新風格"
+            : style === "luxury"
+            ? "輕奢高端風格"
+            : style === "natural"
+            ? "自然有機風格"
+            : style === "cute"
+            ? "可愛萌系風格"
+            : "Apple 科技風格"
         }
 
 請生成以下5大核心模組的詳細內容，以JSON格式返回，所有文字必須使用繁體中文：
@@ -157,7 +167,17 @@ ${brandLine}${extraInfoLine}产品类别：${product.category}
             ? "极简风格"
             : style === "cyber"
             ? "赛博风格"
-            : "国潮风格"
+            : style === "chinese"
+            ? "国潮风格"
+            : style === "japanese"
+            ? "日系清新风格"
+            : style === "luxury"
+            ? "轻奢高端风格"
+            : style === "natural"
+            ? "自然有机风格"
+            : style === "cute"
+            ? "可爱萌系风格"
+            : "Apple 科技风格"
         }
 
 请生成以下5大核心模块的详细内容，以JSON格式返回，所有文字必须使用简体中文：
@@ -215,7 +235,17 @@ Style: ${
             ? "Minimal"
             : style === "cyber"
             ? "Cyber"
-            : "Chinese Traditional"
+            : style === "chinese"
+            ? "Chinese Traditional"
+            : style === "japanese"
+            ? "Japanese Fresh"
+            : style === "luxury"
+            ? "Luxury Premium"
+            : style === "natural"
+            ? "Natural Organic"
+            : style === "cute"
+            ? "Cute & Adorable"
+            : "Apple Tech Style"
         }
 
 Please generate detailed content for the following 5 core modules, return in JSON format:
@@ -414,13 +444,20 @@ function getMockDetailPage(
 
   // Style names for different languages
   const getStyleName = () => {
-    if (isTraditionalChinese) {
-      return style === "minimal" ? "極簡" : style === "cyber" ? "賽博" : "國潮";
-    }
-    if (isSimplifiedChinese) {
-      return style === "minimal" ? "极简" : style === "cyber" ? "赛博" : "国潮";
-    }
-    return style === "minimal" ? "Minimal" : style === "cyber" ? "Cyber" : "Chinese Traditional";
+    const styleNames: Record<string, { tw: string; cn: string; en: string }> = {
+      minimal: { tw: "極簡", cn: "极简", en: "Minimal" },
+      cyber: { tw: "賽博", cn: "赛博", en: "Cyber" },
+      chinese: { tw: "國潮", cn: "国潮", en: "Chinese Traditional" },
+      japanese: { tw: "日系清新", cn: "日系清新", en: "Japanese Fresh" },
+      luxury: { tw: "輕奢高端", cn: "轻奢高端", en: "Luxury Premium" },
+      natural: { tw: "自然有機", cn: "自然有机", en: "Natural Organic" },
+      cute: { tw: "可愛萌系", cn: "可爱萌系", en: "Cute & Adorable" },
+      apple: { tw: "Apple 科技風", cn: "Apple 科技风", en: "Apple Tech Style" },
+    };
+    const s = styleNames[style] || styleNames.minimal;
+    if (isTraditionalChinese) return s.tw;
+    if (isSimplifiedChinese) return s.cn;
+    return s.en;
   };
 
   return {
