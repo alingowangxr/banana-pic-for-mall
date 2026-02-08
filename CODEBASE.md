@@ -9,10 +9,10 @@
 # 📁 Project Context
 
 **Project:** `banana-mall`
-**Framework:** `rust`
-**Type:** `rust`
+**Framework:** `flask-or-fastapi`
+**Type:** `python`
 **Path:** `D:\vibecode\banana-mall`
-**Detected:** 2026-01-16 21:52:34
+**Detected:** 2026-01-18 09:10:43
 
 ---
 
@@ -63,14 +63,20 @@ winget list              # List installed apps
 
 | Property | Value |
 |----------|-------|
-| **Project Type** | RUST |
-| **Framework** | RUST |
-| **Platform** | GENERAL |
+| **Project Type** | PYTHON |
+| **Framework** | FLASK-OR-FASTAPI |
+| **Platform** | API |
 
 ---
 
 ## 📋 Quick Project Commands
 
+#### Python
+```bash
+pip install -r requirements.txt    # Install dependencies
+python manage.py runserver         # Django dev server
+python -m pytest                   # Run tests
+```
 
 
 ---
@@ -83,9 +89,19 @@ winget list              # List installed apps
 > ⚠️ **Note:** If a file has no ← annotation but you see imports in the actual code, this dependency is not yet tracked or is incomplete in CODEBASE.md.
 
 ```
+CLAUDE.md
+CODEBASE.md
 LICENSE
 README.md
+TODO.md
 components.json
+dist/
+  assets/
+    index-CxbntoZ2.js
+    index-DcfZ_oZQ.css
+    index-DtuJ3Ivm.js
+    index-pKQL0QsV.js
+  index.html
 index.html
 package-lock.json
 package.json
@@ -94,19 +110,36 @@ src/
   App.tsx ← main.tsx
   components/
     ErrorBoundary.tsx ← main.tsx
+    editor/
+      DesktopPreview.tsx ← index.ts
+      DetailModuleCard.tsx ← index.ts
+      EditorHeader.test.tsx
+      EditorHeader.tsx ← EditorHeader.test.tsx, index.ts
+      ImageCard.tsx ← index.ts
+      ImageEditPanel.tsx ← index.ts
+      MobilePreview.tsx ← index.ts
+      TextEditPanel.test.tsx
+      TextEditPanel.tsx ← index.ts, TextEditPanel.test.tsx
+      index.ts ← app.py
+    templates/
+      CreateTemplateDialog.tsx ← ConfigPage.tsx, TemplatesPage.tsx
     ui/
-      button.tsx ← App.tsx, ErrorBoundary.tsx, ConfigPage.tsx +5 more
-      card.tsx ← ErrorBoundary.tsx, ConfigPage.tsx, EditorPage.tsx +4 more
-      dialog.tsx
-      input.tsx ← ConfigPage.tsx, EditorPage.tsx, SettingsPage.tsx
-      label.tsx ← ConfigPage.tsx, EditorPage.tsx, SettingsPage.tsx
+      alert-dialog.tsx ← TemplatesPage.tsx
+      badge.tsx ← TemplatesPage.tsx
+      button.tsx ← App.tsx, ErrorBoundary.tsx, ConfigPage.tsx +13 more
+      card.tsx ← ErrorBoundary.tsx, ConfigPage.tsx, EditorPage.tsx +9 more
+      dialog.tsx ← CreateTemplateDialog.tsx
+      dropdown-menu.tsx ← ConfigPage.tsx
+      input.tsx ← ConfigPage.tsx, SettingsPage.tsx, TextEditPanel.tsx +1 more
+      label.tsx ← ConfigPage.tsx, SettingsPage.tsx, ImageEditPanel.tsx +1 more
       progress.tsx ← GeneratingPage.tsx
-      select.tsx ← ConfigPage.tsx, SettingsPage.tsx
+      select.tsx ← ConfigPage.tsx, SettingsPage.tsx, CreateTemplateDialog.tsx
+      sonner.tsx ← App.tsx
       tabs.tsx ← EditorPage.tsx
-      textarea.tsx ← EditorPage.tsx
+      textarea.tsx ← ImageEditPanel.tsx, TextEditPanel.tsx
   hooks/
     useTauriStore.ts ← App.tsx
-    useTheme.ts ← App.tsx
+    useTheme.ts ← App.tsx, sonner.tsx
   index.css
   lib/
     api-detail.ts ← GeneratingPage.tsx
@@ -114,9 +147,16 @@ src/
     api.ts ← api-detail.ts, EditorPage.tsx, GeneratingPage.tsx +1 more
     error-handler.ts
     export.ts ← EditorPage.tsx
-    i18n.ts ← App.tsx, ConfigPage.tsx, GeneratingPage.tsx +1 more
+    i18n.test.ts
+    i18n.ts ← App.tsx, i18n.test.ts, ConfigPage.tsx +11 more
     image-utils.ts
-    utils.ts ← UploadPage.tsx, button.tsx, card.tsx +7 more
+    locales/
+      en.ts ← i18n.ts, index.ts
+      index.ts ← app.py
+      types.ts ← i18n.ts, i18n.ts, en.ts +3 more
+      zh-CN.ts ← i18n.ts, index.ts
+      zh-TW.ts ← i18n.ts, index.ts
+    utils.ts ← UploadPage.tsx, alert-dialog.tsx, badge.tsx +10 more
   main.tsx
   pages/
     ConfigPage.tsx ← App.tsx
@@ -124,9 +164,12 @@ src/
     GeneratingPage.tsx ← App.tsx
     HistoryPage.tsx ← App.tsx
     SettingsPage.tsx ← App.tsx
+    TemplatesPage.tsx ← App.tsx
     UploadPage.tsx ← App.tsx
   stores/
-    useAppStore.ts ← App.tsx, useTauriStore.ts, useTheme.ts +12 more
+    useAppStore.ts ← App.tsx, useTauriStore.ts, useTheme.ts +16 more
+  test/
+    setup.ts
 src-tauri/
   Cargo.toml
   build.rs
@@ -201,12 +244,13 @@ test-app.js
 tsconfig.json
 tsconfig.node.json
 vite.config.ts
+vitest.config.ts
 ```
 
 
 ## 📊 File Dependencies
 
-> Scanned 34 files
+> Scanned 60 files
 
 ### High-Impact Files
 
@@ -214,11 +258,11 @@ vite.config.ts
 
 | File | Imported by |
 |------|-------------|
-| `src/stores/useAppStore` | 15 files |
-| `src/lib/utils` | 10 files |
-| `src/components/ui/button` | 8 files |
-| `src/components/ui/card` | 7 files |
-| `src/lib/i18n` | 4 files |
+| `src/stores/useAppStore` | 19 files |
+| `src/components/ui/button` | 16 files |
+| `src/lib/i18n` | 14 files |
+| `src/lib/utils` | 13 files |
+| `src/components/ui/card` | 12 files |
 
 
 

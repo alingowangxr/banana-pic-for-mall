@@ -18,7 +18,7 @@ AI-powered e-commerce detail page generator built with Tauri v2 + React + TypeSc
 
 ## 项目概述
 
-**BananaPicForMall** 是一个 AI 驱动的电商详情页生成工具，由 [MatrixInspire（灵矩绘境）](https://mxinspire.com) 开发。
+**BananaPicForMall** 是一个 AI 驱动的电商详情页生成工具，原repo是Banana Mall由 MatrixInspire（灵矩绘境） 开发，经我修改增加符合更多平台使用。
 
 ### 核心功能
 
