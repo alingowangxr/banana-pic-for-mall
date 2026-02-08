@@ -1,4 +1,4 @@
-# BananaMall
+# BananaPicForMall
 
 <div align="center">
 
@@ -18,7 +18,7 @@ AI-powered e-commerce detail page generator built with Tauri v2 + React + TypeSc
 
 ## 项目概述
 
-**BananaMall** 是一个 AI 驱动的电商详情页生成工具，由 [MatrixInspire（灵矩绘境）](https://mxinspire.com) 开发。
+**BananaPicForMall** 是一个 AI 驱动的电商详情页生成工具，由 [MatrixInspire（灵矩绘境）](https://mxinspire.com) 开发。
 
 ### 核心功能
 
@@ -88,8 +88,8 @@ AI-powered e-commerce detail page generator built with Tauri v2 + React + TypeSc
 1. **克隆仓库**
 
 ```bash
-git clone https://github.com/alingowangxr/banana-mall.git
-cd banana-mall
+git clone https://github.com/alingowangxr/banana-pic-for-mall.git
+cd banana-pic-for-mall
 ```
 
 2. **安装依赖**
@@ -126,7 +126,7 @@ npm run test:run    # 单次运行
 ## 📁 项目结构
 
 ```
-banana-mall/
+banana-pic-for-mall/
 ├── src/
 │   ├── components/
 │   │   ├── editor/           # 编辑器组件
@@ -272,7 +272,7 @@ npm run test:coverage
 
 ## 🐛 问题反馈
 
-如遇到问题，请在 [GitHub Issues](https://github.com/alingowangxr/banana-mall/issues) 提交。
+如遇到问题，请在 [GitHub Issues](https://github.com/alingowangxr/banana-pic-for-mall/issues) 提交。
 
 ## 📄 许可证
 
